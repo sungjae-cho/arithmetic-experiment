@@ -1,6 +1,12 @@
 import numpy as np
 import pickle
-from utils import create_dir
+import os
+
+
+def create_dir(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
 
 def get_result_digits(operand_digits, operator):
     if operator == 'add':
@@ -14,6 +20,7 @@ def get_result_digits(operand_digits, operator):
     if operator == 'modulo':
         result_digits = operand_digits
     return result_digits
+
 
 def get_str_bin(int_dec):
     '''
@@ -33,6 +40,7 @@ def get_str_bin(int_dec):
         str_bin =  bin(int_dec)[0] + bin(int_dec)[3:]
     return str_bin
 
+
 def get_int_dec(str_bin):
     '''
     Parameters
@@ -45,6 +53,7 @@ def get_int_dec(str_bin):
     '''
     int_dec = int(str_bin, 2)
     return int_dec
+
 
 def get_np_bin(str_bin, np_bin_digits):
     '''
@@ -64,6 +73,7 @@ def get_np_bin(str_bin, np_bin_digits):
         np_bin[-i] = int(str_bin[-i])
 
     return np_bin
+
 
 def get_leading_zeros(operand):
     '''
@@ -85,6 +95,7 @@ def get_leading_zeros(operand):
             break
     return n_leading_zeros
 
+
 def less_than(operand1, operand2):
     '''
     Parameters
@@ -105,6 +116,7 @@ def less_than(operand1, operand2):
     # All same digits
     return False
 
+
 def str_binary_operation(str_operand1, str_operator, str_operand2):
     int_dec_operand1 = get_int_dec(str_operand1)
     int_dec_operand2 = get_int_dec(str_operand2)
@@ -121,6 +133,7 @@ def str_binary_operation(str_operand1, str_operator, str_operand2):
     str_bin_result = get_str_bin(int_dec_result)
     return str_bin_result
 
+
 def add_two_digits(digit1, digit2, carry):
     '''
     Parameters
@@ -131,7 +144,7 @@ def add_two_digits(digit1, digit2, carry):
 
     Returns
     -------
-    carry : the carry for the next digit addition
+    carry : the carry for the next digit addition.
     result : the current digit result of addition.
     '''
     digit_sum = digit1 + digit2 + carry
@@ -146,6 +159,7 @@ def add_two_digits(digit1, digit2, carry):
         (carry, result) = (0, 0)
 
     return (carry, result)
+
 
 def add_two_numbers(operand1, operand2):
     '''
@@ -172,6 +186,7 @@ def add_two_numbers(operand1, operand2):
             result[-(i+1)] = carry
     return (result, n_carries)
 
+
 def subtract_two_numbers(operand1, operand2):
     '''
     Parameters
@@ -182,7 +197,7 @@ def subtract_two_numbers(operand1, operand2):
 
     Returns
     -------
-    result : np.ndarray. result = operand1 - operand2. 1-D. shape==(operand_digits)
+    result : np.ndarray. result = operand1 - operand2. 1-D. shape==(operand_digits).
     - Beacuse operand1 >= operand2, result >= 0.
     n_carries : int. The number of carries that occurred while subtraction.
     '''
@@ -204,6 +219,7 @@ def subtract_two_numbers(operand1, operand2):
             result[-i] = 1
     return (result, n_carries)
 
+
 def multiply_two_numbers(operand1, operand2):
     '''
     Parameters
@@ -213,8 +229,7 @@ def multiply_two_numbers(operand1, operand2):
 
     Returns
     -------
-    result : np.ndarray. result = operand1 - operand2. 1-D. shape==(operand_digits)
-    - Beacuse operand1 >= operand2, result >= 0.
+    result : np.ndarray. result = operand1 - operand2. 1-D. shape==(operand_digits).
     n_carries : int. The number of carries that occurred while multiplication.
     '''
     operand_digits = operand1.shape[0]
@@ -242,18 +257,20 @@ def multiply_two_numbers(operand1, operand2):
 
     return (result, n_carries)
 
+
 def divide_two_numbers(operand1, operand2):
     '''
     Parameters
     ----------
     operand1 : np.ndarray. 1-dimension. shape==(operand_digits).
     operand2 : np.ndarray. 1-dimension. shape==(operand_digits).
+    - operand2 must not be zero.
 
     Returns
     -------
     result : np.ndarray. result = operand1 // operand2. 1-D. shape==(operand_digits)
-    - Beacuse operand1 >= operand2, result >= 0.
     n_carries : int. The number of carries that occurred while multiplication.
+    remainder : np.ndarray. shape==(operand_digits).
     '''
     operand_digits = operand1.shape[0]
     result_digits = get_result_digits(operand_digits, 'divide')
@@ -293,11 +310,30 @@ def divide_two_numbers(operand1, operand2):
 
         n_total_carries = n_total_carries + n_carries
 
+    remainder = local_subtract_result
+
+    return (result, n_carries, remainder)
+
+
+def modulo_two_numbers(operand1, operand2):
+    '''
+    Parameters
+    ----------
+    operand1 : np.ndarray. 1-dimension. shape==(operand_digits).
+    operand2 : np.ndarray. 1-dimension. shape==(operand_digits).
+    - operand2 must not be zero.
+
+    Returns
+    -------
+    result : np.ndarray. result = operand1 % operand2. 1-D. shape==(operand_digits).
+    n_carries : int. The number of carries that occurred while multiplication.
+    remainder : np.ndarray. shape==(operand_digits).
+    '''
+
+    _, n_carries, result = divide_two_numbers(operand1, operand2)
+
     return (result, n_carries)
 
-# TODO:
-def modulo_two_numbers(operand1, operand2):
-    pass
 
 def generate_datasets(operand_digits, operator):
     if operator == 'add':
@@ -312,6 +348,7 @@ def generate_datasets(operand_digits, operator):
         carry_datasets = generate_modulo_datasets(operand_digits)
 
     return carry_datasets
+
 
 def generate_add_datasets(operand_digits):
     '''
@@ -358,6 +395,7 @@ def generate_add_datasets(operand_digits):
 
     return carry_datasets
 
+
 def generate_subtract_datasets(operand_digits):
     '''
     Parameters
@@ -403,6 +441,7 @@ def generate_subtract_datasets(operand_digits):
 
     return carry_datasets
 
+
 def generate_multiply_datasets(operand_digits):
     '''
     Parameters
@@ -447,6 +486,7 @@ def generate_multiply_datasets(operand_digits):
 
     return carry_datasets
 
+
 def generate_divide_datasets(operand_digits):
     '''
     Parameters
@@ -470,7 +510,7 @@ def generate_divide_datasets(operand_digits):
             np_bin_op2 = get_np_bin(get_str_bin(dec_op2), operand_digits)
 
             # The phase of a dividing operation
-            result, n_carries = divide_two_numbers(np_bin_op1, np_bin_op2)
+            result, n_carries, _ = divide_two_numbers(np_bin_op1, np_bin_op2)
 
             # Create a list to store operations
             if n_carries not in carry_datasets:
@@ -491,19 +531,62 @@ def generate_divide_datasets(operand_digits):
 
     return carry_datasets
 
-# TODO:
+
 def generate_modulo_datasets(operand_digits):
-    pass
+    '''
+    Parameters
+    ----------
+    operand_digits: the number of the digits of an operand
+
+    Returns
+    -------
+    carry_datasets: dict.
+    - carry_datasets[n_carries]['input']: numpy.ndarray. shape == (n_operations, operand_digits * 2).
+    -- Input dataset for n_carries modulo(division).
+    - carry_datasets[n_carries]['output']: numpy.ndarray. shape == (n_operations, result_digits).
+    -- Output dataset for n_carries modulo(division).
+    -- result_digits == operand_digits
+    '''
+
+    carry_datasets = dict()
+    for dec_op1 in range(2**operand_digits):
+        for dec_op2 in range(1, 2**operand_digits): # Exclude `dec_op2 = 0`
+            # Get numpy.ndarray binary operands.
+            np_bin_op1 = get_np_bin(get_str_bin(dec_op1), operand_digits)
+            np_bin_op2 = get_np_bin(get_str_bin(dec_op2), operand_digits)
+
+            # The phase of a dividing operation
+            result, n_carries = modulo_two_numbers(np_bin_op1, np_bin_op2)
+
+            # Create a list to store operations
+            if n_carries not in carry_datasets:
+                carry_datasets[n_carries] = dict()
+                carry_datasets[n_carries]['input'] = list()
+                carry_datasets[n_carries]['output'] = list()
+
+            # Append the input of division.
+            carry_datasets[n_carries]['input'].append(np.concatenate((np_bin_op1, np_bin_op2)).reshape(1,-1))
+
+            # Append the output of division.
+            carry_datasets[n_carries]['output'].append(result.reshape(1,-1))
+
+    # List to one numpy.ndarray
+    for key in carry_datasets.keys():
+        carry_datasets[key]['input'] = np.concatenate(carry_datasets[key]['input'], axis=0)
+        carry_datasets[key]['output'] = np.concatenate(carry_datasets[key]['output'], axis=0)
+
     return carry_datasets
+
 
 def generate_and_save_all_datasets():
     operand_digits_list = [4, 6, 8]
-    operators_list = ['add', 'subtract', 'multiply', 'divide']
+    operators_list = ['add', 'subtract', 'multiply', 'divide', 'modulo'] # FIXME: Add 'modulo'
     # operators_list = ['add', 'substract', 'multiply', 'divide', 'modulo']
     for operator in operators_list:
         for operand_digits in operand_digits_list:
             carry_datasets = generate_datasets(operand_digits, operator)
             save_carry_datasets(carry_datasets, operand_digits, operator)
+
 
 def print_carry_datasets_info(carry_datasets):
     data_len_list = list()
@@ -520,6 +603,7 @@ def print_carry_datasets_info(carry_datasets):
         print('- Perceptage of {}-carry operations: {} %'.format(
             key, (carry_datasets[key]['input'].shape[0] / total_operations * 100)))
 
+
 def save_carry_datasets(carry_datasets, operand_digits, operator):
     save_dir = 'data/{}-bit/{}'.format(operand_digits, operator)
     create_dir(save_dir)
@@ -529,6 +613,7 @@ def save_carry_datasets(carry_datasets, operand_digits, operator):
         pickle.dump(carry_datasets, f)
 
     print("Saved in '{}'.".format(save_path))
+
 
 def import_carry_datasets(operand_digits, operator):
     '''
@@ -551,6 +636,7 @@ def import_carry_datasets(operand_digits, operator):
     print("Imported from '{}'.".format(import_path))
 
     return carry_datasets
+
 
 def test_func_add_two_numbers():
     is_all_correct = True
@@ -615,7 +701,7 @@ def test_func_multiply_two_numbers():
                 is_all_correct = is_all_correct and is_equal
     return is_all_correct
 
-# TODO:
+
 def test_func_divide_two_numbers():
     is_all_correct = True
     operand_digits_list = [4,6,8]
@@ -630,15 +716,33 @@ def test_func_divide_two_numbers():
 
                 np_operand1 = get_np_bin(get_str_bin(int_dec_operand1), operand_digits)
                 np_operand2 = get_np_bin(get_str_bin(int_dec_operand2), operand_digits)
-                np_bin_result_algo, _ = divide_two_numbers(np_operand1, np_operand2)
+                np_bin_result_algo, _, _ = divide_two_numbers(np_operand1, np_operand2)
 
                 is_equal = np.array_equal(np_result, np_bin_result_algo)
                 is_all_correct = is_all_correct and is_equal
     return is_all_correct
 
-# TODO:
+
 def test_func_modulo_two_numbers():
+    is_all_correct = True
+    operand_digits_list = [4,6,8]
+    for operand_digits in operand_digits_list:
+        # varying part
+        result_digits = get_result_digits(operand_digits, 'modulo')
+        for int_dec_operand1 in range(2**operand_digits):
+            for int_dec_operand2 in range(1, 2**operand_digits): # Exclude `int_dec_operand2 = 0`
+                # varying part
+                bin_result = get_str_bin(int_dec_operand1 % int_dec_operand2)
+                np_result = get_np_bin(bin_result, result_digits)
+
+                np_operand1 = get_np_bin(get_str_bin(int_dec_operand1), operand_digits)
+                np_operand2 = get_np_bin(get_str_bin(int_dec_operand2), operand_digits)
+                np_bin_result_algo, _ = modulo_two_numbers(np_operand1, np_operand2)
+
+                is_equal = np.array_equal(np_result, np_bin_result_algo)
+                is_all_correct = is_all_correct and is_equal
     return is_all_correct
+
 
 def test_multiply_symmetric_carries():
     '''
