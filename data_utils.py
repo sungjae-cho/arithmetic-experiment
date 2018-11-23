@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import os
+import csv # write_carry_dataset_statistic
 
 
 def create_dir(directory):
@@ -602,6 +603,54 @@ def print_carry_datasets_info(carry_datasets):
         print('- #operations: {}'.format(carry_datasets[key]['input'].shape[0]))
         print('- Perceptage of {}-carry operations: {} %'.format(
             key, (carry_datasets[key]['input'].shape[0] / total_operations * 100)))
+
+
+def get_carry_dataset_info_list(carry_datasets, operator):
+    data_len_list = list()
+    for key in carry_datasets.keys():
+        data_len_list.append(carry_datasets[key]['input'].shape[0])
+    total_operations = sum(data_len_list)
+
+    carry_dataset_info_list = list()
+
+
+    for n_carries in carry_datasets.keys():
+        carry_dataset_info = dict()
+
+        carry_dataset_info['operator'] = operator
+        carry_dataset_info['carries'] = n_carries
+        carry_dataset_info['operand digits'] = carry_datasets[n_carries]['input'].shape[1] // 2
+        carry_dataset_info['input dimension'] = carry_datasets[n_carries]['input'].shape[1]
+        carry_dataset_info['output dimension'] = carry_datasets[n_carries]['output'].shape[1]
+        carry_dataset_info['carry operations'] = carry_datasets[n_carries]['input'].shape[0]
+        carry_dataset_info['total operations'] = total_operations
+        carry_dataset_info['carry percentage'] = (carry_datasets[key]['input'].shape[0] / total_operations * 100)
+
+        carry_dataset_info_list.append(carry_dataset_info)
+
+    return carry_dataset_info_list
+
+
+def write_carry_dataset_statistic():
+    carry_dataset_info_list = list()
+    csv_file_name = 'carry_dataset_statistic.csv'
+
+    for operator in ['add', 'subtract', 'multiply', 'divide', 'modulo']:
+        for operand_digits in [4, 6, 8]:
+            carry_datasets = generate_datasets(operand_digits, operator)
+            carry_dataset_info_list = carry_dataset_info_list + get_carry_dataset_info_list(carry_datasets, operator)
+
+    with open(csv_file_name, mode='w') as csv_file:
+        fieldnames = ['operator', 'operand digits',
+                      'input dimension', 'output dimension', 'total operations',
+                     'carries', 'carry operations', 'carry percentage']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for carry_dataset_info in carry_dataset_info_list:
+            writer.writerow(carry_dataset_info)
+
+    print('{} saved!'.format(csv_file_name))
 
 
 def save_carry_datasets(carry_datasets, operand_digits, operator):
