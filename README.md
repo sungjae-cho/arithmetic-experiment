@@ -12,6 +12,7 @@ To make a program that can do the psychology experiment of arithmetic cognition 
 
 # Data descriptions
 ## The size of total operations
+
 | Operator | Operand digits | Input dim | Output dim | Total operations |
 |----------|----------------|-----------|------------|------------------|
 | add      | 4              | 8         | 5          | 256              |
@@ -30,7 +31,9 @@ To make a program that can do the psychology experiment of arithmetic cognition 
 | modulo   | 6              | 12        | 6          | 4032             |
 | modulo   | 8              | 16        | 8          | 65280            |
 
-## The size of n-carry datasets
+## The size of n-carry datasets for each (operator, operand_digits)
+
+Reference this markdown document [carry_datasets_statistics.md](carry_datasets_statistics.md).
 
 # Import data structure
 ```Python
