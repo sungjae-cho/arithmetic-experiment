@@ -33,7 +33,7 @@ To make a program that can do the psychology experiment of arithmetic cognition 
 
 ## The size of n-carry datasets for each (operator, operand_digits)
 
-Reference this markdown document [carry_datasets_statistics.csv](carry_datasets_statistics.csv).
+Reference this markdown document [carry_dataset_statistics.csv](carry_dataset_statistics.csv).
 
 # Import data structure
 ```Python
