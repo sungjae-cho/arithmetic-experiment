@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 import os
-import csv # write_carry_dataset_statistic
+import csv # write_carry_dataset_statistics
 
 
 def create_dir(directory):
@@ -631,9 +631,9 @@ def get_carry_dataset_info_list(carry_datasets, operator):
     return carry_dataset_info_list
 
 
-def write_carry_dataset_statistic():
+def write_carry_dataset_statistics():
     carry_dataset_info_list = list()
-    csv_file_name = 'carry_dataset_statistic.csv'
+    csv_file_name = 'carry_dataset_statistics.csv'
 
     for operator in ['add', 'subtract', 'multiply', 'divide', 'modulo']:
         for operand_digits in [4, 6, 8]:
