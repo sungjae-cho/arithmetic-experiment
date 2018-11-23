@@ -65,6 +65,46 @@ def get_np_bin(str_bin, np_bin_digits):
 
     return np_bin
 
+def get_leading_zeros(operand):
+    '''
+    Parameters
+    ----------
+    operand : np.ndarray. 1-dimension. shape==(operand_digits).
+
+    Returns
+    -------
+    n_leading_zeros : int. The number of leading zeros.
+    - If operand is [0,0,1,1,0,1], the number of leading zeros is 2.
+    '''
+    operand_digits = operand.shape[0]
+    n_leading_zeros = 0
+    for i in range(operand_digits):
+        if operand[i] == 0:
+            n_leading_zeros = n_leading_zeros + 1
+        else:
+            break
+    return n_leading_zeros
+
+def less_than(operand1, operand2):
+    '''
+    Parameters
+    ----------
+    operand1 : np.ndarray. 1-dimension. shape==(operand_digits).
+    operand2 : np.ndarray. 1-dimension. shape==(operand_digits).
+
+    Returns
+    -------
+    is_less_than : bool. operand1 < operand2.
+    '''
+    operand_digits = operand1.shape[0]
+    for i in range(operand_digits):
+        if operand1[i] > operand2[i]:
+            return False
+        if operand1[i] < operand2[i]:
+            return True
+    # All same digits
+    return False
+
 def str_binary_operation(str_operand1, str_operator, str_operand2):
     int_dec_operand1 = get_int_dec(str_operand1)
     int_dec_operand2 = get_int_dec(str_operand2)
@@ -259,6 +299,20 @@ def divide_two_numbers(operand1, operand2):
 def modulo_two_numbers(operand1, operand2):
     pass
 
+def generate_datasets(operand_digits, operator):
+    if operator == 'add':
+        carry_datasets = generate_add_datasets(operand_digits)
+    if operator == 'subtract':
+        carry_datasets = generate_subtract_datasets(operand_digits)
+    if operator == 'multiply':
+        carry_datasets = generate_multiply_datasets(operand_digits)
+    if operator == 'divide':
+        carry_datasets = generate_divide_datasets(operand_digits)
+    if operator == 'modulo':
+        carry_datasets = generate_modulo_datasets(operand_digits)
+
+    return carry_datasets
+
 def generate_add_datasets(operand_digits):
     '''
     Parameters
@@ -441,6 +495,15 @@ def generate_divide_datasets(operand_digits):
 def generate_modulo_datasets(operand_digits):
     pass
     return carry_datasets
+
+def generate_and_save_all_datasets():
+    operand_digits_list = [4, 6, 8]
+    operators_list = ['add', 'subtract', 'multiply', 'divide']
+    # operators_list = ['add', 'substract', 'multiply', 'divide', 'modulo']
+    for operator in operators_list:
+        for operand_digits in operand_digits_list:
+            carry_datasets = generate_datasets(operand_digits, operator)
+            save_carry_datasets(carry_datasets, operand_digits, operator)
 
 def print_carry_datasets_info(carry_datasets):
     data_len_list = list()
