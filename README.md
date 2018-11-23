@@ -11,6 +11,26 @@ To make a program that can do the psychology experiment of arithmetic cognition 
 # Experiment record
 
 # Data descriptions
+## The size of total operations
+| Operator | Operand digits | Input dim | Output dim | Total operations |
+|----------|----------------|-----------|------------|------------------|
+| add      | 4              | 8         | 5          | 256              |
+| add      | 6              | 12        | 7          | 4096             |
+| add      | 8              | 16        | 9          | 65536            |
+| subtract | 4              | 8         | 4          | 136              |
+| subtract | 6              | 12        | 6          | 2080             |
+| subtract | 8              | 16        | 8          | 32896            |
+| multiply | 4              | 8         | 8          | 256              |
+| multiply | 6              | 12        | 12         | 4096             |
+| multiply | 8              | 16        | 16         | 65536            |
+| divide   | 4              | 8         | 4          | 240              |
+| divide   | 6              | 12        | 6          | 4032             |
+| divide   | 8              | 16        | 8          | 65280            |
+| modulo   | 4              | 8         | 4          | 240              |
+| modulo   | 6              | 12        | 6          | 4032             |
+| modulo   | 8              | 16        | 8          | 65280            |
+
+## The size of n-carry datasets
 
 # Import data structure
 ```Python
