@@ -624,7 +624,7 @@ def get_carry_dataset_info_list(carry_datasets, operator):
         carry_dataset_info['output dimension'] = carry_datasets[n_carries]['output'].shape[1]
         carry_dataset_info['carry operations'] = carry_datasets[n_carries]['input'].shape[0]
         carry_dataset_info['total operations'] = total_operations
-        carry_dataset_info['carry percentage'] = (carry_datasets[key]['input'].shape[0] / total_operations * 100)
+        carry_dataset_info['carry percentage'] = (carry_datasets[n_carries]['input'].shape[0] / total_operations * 100)
 
         carry_dataset_info_list.append(carry_dataset_info)
 
