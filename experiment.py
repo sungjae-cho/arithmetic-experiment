@@ -144,8 +144,7 @@ def ask_question(question_type, operand1, operand2, answer, num_carries, qid):
         print(" Correct !! Good Job".rjust(30))
     else:
         print("Hard luck :(".rjust(30))
-        print("The correct answer was {answer} with {carries} carries".format(answer=string_answer,
-                                                                              carries=num_carries).rjust(30))
+        print("The correct answer was {answer}".format(answer=string_answer).rjust(30))
     return {"correct": correct, "duration": duration, "user_answer":user_answer, "correct_answer": string_answer,
             "question_type": question_type, "num_carries": num_carries, "operand_digits": len(operand1), "qid": qid}
 
@@ -155,7 +154,10 @@ def validate_answer(answer, user_answer):
     user_answer_array = [int(i) for i in user_answer]
     if len(answer) > len(user_answer_array):
         user_answer_array = [0] * (len(answer) - len(user_answer_array)) + user_answer_array
-    return (numpy.array(user_answer_array) == answer).all()
+    correct = (numpy.array(user_answer_array) == answer)
+    if not isinstance(correct, bool):
+        correct = correct.all()
+    return correct
 
 
 def _valid_answer(answer, first=False):
