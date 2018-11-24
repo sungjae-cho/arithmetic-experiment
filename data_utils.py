@@ -694,6 +694,7 @@ def plot_carry_dataset_statistics(mode='save', file_format='svg'):
             plot_fig_path = '{}/carry_dataset_statistics_{}-bit_operand.{}'.format(plot_fig_dir, operand_digits, file_format)
             plt.savefig(plot_fig_path)
             print('{} saved!'.format(plot_fig_path))
+        plt.clf()
 
 
 def save_carry_datasets(carry_datasets, operand_digits, operator):
