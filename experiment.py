@@ -1,5 +1,5 @@
-import os
 from experiment_utils import load_questions
+import random, time, os, numpy
 PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
 USER_INFO_FILE = os.path.join(USER_DATA_PATH, "user_info", "user_id.txt")
@@ -7,10 +7,12 @@ RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
 MALE, FEMALE = range(1, 3)
 BAD, OKAY, GOOD = range(1, 4)
 ADD = 5
-SUBTRACT = 5
+SUBTRACT = 0
 MULTIPLY = 5
-DIVIDE = 5
-MODULOS = 0
+DIVIDE = 0
+MODULO = 0
+OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
+
 
 def welcome():
     """
@@ -45,7 +47,7 @@ def get_user_data():
         gender = None
         while not gender:
             g = input("Are you male or female (M/F) :\t").strip()
-            if g[0].upper() not in ["M", "F"]:
+            if not g or g[0].upper() not in ["M", "F"]:
                 continue
 
             gender = MALE if g[0].upper() == "M" else FEMALE
@@ -65,7 +67,7 @@ def get_user_data():
         print("Fantastic\n")
 
         c = input("Have you entered all your input correct (Y/N):\t").strip()
-        info_correct = True if c[0].upper() == "Y" else False
+        info_correct = True if c and c[0].upper() == "Y" else False
 
     # Make sure we have everything we need
     assert all([name, age, gender, ability])
@@ -81,8 +83,8 @@ def wait_for_user():
     print("Please answer these questions as quickly and accurately as possible.")
     print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
     while not ready:
-        r = input("Are you ready (Y/N) ??\n\n\n")
-        ready = True if r[0].upper() == "Y" else False
+        r = input("Are you ready (Y/N) ??\t")
+        ready = True if r and r[0].upper() == "Y" else False
 
 
 def record_results(name, age, gender, ability, results):
@@ -93,13 +95,15 @@ def record_results(name, age, gender, ability, results):
     """
     id = get_id()
     with open(USER_INFO_FILE, "a+") as fh:
-        fh.write("{id}={name}".format(id=id, name=name))
+        fh.write("{id}={name}\n".format(id=id, name=name))
 
     file_name = "{id}_{age}_{gender}_{ability}.result".format(id=id, age=age, gender=gender, ability=ability)
     file_name = os.path.join(RESULTS_DIR, file_name)
-    with open(file_name, "wb") as fh:
+    with open(file_name, "w+") as fh:
         for result in results:
-            pass
+            result_string = "{qid}\t{correct}\t{duration}\t{user_answer}\t{correct_answer}\t{operand_digits}\t" \
+                            "{question_type}\t{num_carries}\n".format(**result)
+            fh.write(result_string)
 
 
 def get_id():
@@ -107,7 +111,75 @@ def get_id():
 
 
 def run_experiment():
-    question_set = load_questions(add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE)
+    question_set = load_questions(add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
+    results = []
+    while question_set:
+        ready = False
+        while not ready:
+            r = input("Are you ready for next question (Y/N) ??")
+            ready = True if r and r[0].upper() == "Y" else False
+        question_type = random.choice(list(question_set.keys()))
+        operand1, operand2, answer, num_carries, qid = _get_question(question_set, question_type)
+        result = ask_question(question_type, operand1, operand2, answer, num_carries, qid)
+        results.append(result)
+    print("\n Great Job: You got {correct}/{total}".format(correct=len([1 for result in results if result["correct"]]),
+                                                           total=len(results)))
+    print("Thank You !!!")
+    return results
+
+
+def ask_question(question_type, operand1, operand2, answer, num_carries, qid):
+    print("{operand1}".format(operand1=operand1).rjust(30))
+    print("{operation} {operand2}".format(operation=OPERATION_DICT[question_type.upper()], operand2=operand2).rjust(30))
+    print("-" * 30)
+    start_time = time.time()
+    valid_answer = False
+    while not valid_answer:
+        user_answer = input("Your answer: ").replace(" ", "")
+        valid_answer = _valid_answer(user_answer)
+    duration = time.time() - start_time
+    correct = validate_answer(answer, user_answer)
+    string_answer = "".join([str(int(i)) for i in answer])
+    if correct:
+        print(" Correct !! Good Job".rjust(30))
+    else:
+        print("Hard luck :(".rjust(30))
+        print("The correct answer was {answer} with {carries} carries".format(answer=string_answer,
+                                                                              carries=num_carries).rjust(30))
+    return {"correct": correct, "duration": duration, "user_answer":user_answer, "correct_answer": string_answer,
+            "question_type": question_type, "num_carries": num_carries, "operand_digits": len(operand1), "qid": qid}
+
+
+def validate_answer(answer, user_answer):
+
+    user_answer_array = [int(i) for i in user_answer]
+    if len(answer) > len(user_answer_array):
+        user_answer_array = [0] * (len(answer) - len(user_answer_array)) + user_answer_array
+    return (numpy.array(user_answer_array) == answer).all()
+
+
+def _valid_answer(answer, first=False):
+    valid = True
+    if len(answer) < 1 or not all([i in ["0", "1"] for i in answer]):
+        if not first:
+            print("Invalid answer !!!")
+        valid = False
+    return valid
+
+
+def _get_question(question_set, question_type):
+    """
+
+    :param question_set:
+    :param question_type:
+    :return:
+    """
+    num_questions = len(question_set[question_type])
+    question_index = random.choice(range(num_questions))
+    question = question_set[question_type].pop(question_index)
+    if not question_set[question_type]:
+        del question_set[question_type]
+    return question
 
 
 def main():
