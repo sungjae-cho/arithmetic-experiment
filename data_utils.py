@@ -2,6 +2,14 @@ import numpy as np
 import pickle
 import os
 import csv # write_carry_dataset_statistics
+import pandas as pd # plot_carry_dataset_statistics
+import matplotlib.pyplot as plt # plot_carry_dataset_statistics
+
+data_dir = 'data'
+plot_fig_dir = 'plot_figures'
+carry_dataset_statistics_name = 'carry_dataset_statistics.csv'
+operand_digits_list = [4, 6, 8]
+operators_list = ['add', 'subtract', 'multiply', 'divide', 'modulo']
 
 
 def create_dir(directory):
@@ -95,6 +103,11 @@ def get_leading_zeros(operand):
         else:
             break
     return n_leading_zeros
+
+
+def get_carry_ds_stat_path():
+    carry_ds_stat_path = '{}/{}'.format(data_dir, carry_dataset_statistics_name)
+    return carry_ds_stat_path
 
 
 def less_than(operand1, operand2):
@@ -580,9 +593,6 @@ def generate_modulo_datasets(operand_digits):
 
 
 def generate_and_save_all_datasets():
-    operand_digits_list = [4, 6, 8]
-    operators_list = ['add', 'subtract', 'multiply', 'divide', 'modulo'] # FIXME: Add 'modulo'
-    # operators_list = ['add', 'substract', 'multiply', 'divide', 'modulo']
     for operator in operators_list:
         for operand_digits in operand_digits_list:
             carry_datasets = generate_datasets(operand_digits, operator)
@@ -633,14 +643,15 @@ def get_carry_dataset_info_list(carry_datasets, operator):
 
 def write_carry_dataset_statistics():
     carry_dataset_info_list = list()
-    csv_file_name = 'carry_dataset_statistics.csv'
+    csv_file_path = get_carry_ds_stat_path()
+    create_dir(data_dir)
 
-    for operator in ['add', 'subtract', 'multiply', 'divide', 'modulo']:
-        for operand_digits in [4, 6, 8]:
+    for operator in operators_list:
+        for operand_digits in operand_digits_list:
             carry_datasets = generate_datasets(operand_digits, operator)
             carry_dataset_info_list = carry_dataset_info_list + get_carry_dataset_info_list(carry_datasets, operator)
 
-    with open(csv_file_name, mode='w') as csv_file:
+    with open(csv_file_path, mode='w') as csv_file:
         fieldnames = ['operator', 'operand digits',
                       'input dimension', 'output dimension', 'total operations',
                      'carries', 'carry operations', 'carry percentage']
@@ -650,7 +661,39 @@ def write_carry_dataset_statistics():
         for carry_dataset_info in carry_dataset_info_list:
             writer.writerow(carry_dataset_info)
 
-    print('{} saved!'.format(csv_file_name))
+    print('{} saved!'.format(csv_file_path))
+
+
+def plot_carry_dataset_statistics(mode='save', file_format='svg'):
+    df_carry_ds_stat = pd.read_csv(get_carry_ds_stat_path())
+    df_carry_ds_stat = df_carry_ds_stat[['operator', 'operand digits', 'carries', 'carry percentage']]
+    for operand_digits in operand_digits_list:
+        plt.title('Percentage of operations by required carries ({}-bit operand)'.format(operand_digits))
+        plt.xlabel('Carries')
+        plt.ylabel('Percentage (%)')
+        #plt.yticks(np.arange(0, 101, step=20))
+        plt.ylim(0, 101)
+        for operator in operators_list:
+            if operator == 'modulo':
+                break
+            if operator == 'divide':
+                operator_label = 'divide/modulo'
+            else:
+                operator_label = operator
+
+            df = df_carry_ds_stat.loc[(df_carry_ds_stat['operator'] == operator) & (df_carry_ds_stat['operand digits'] == operand_digits)]
+            df = df[['carries', 'carry percentage']]
+
+            plt.plot(df['carries'], df['carry percentage'], ':o', label=operator_label)
+            #plt.bar(df['carries'], df['carry percentage'], label=operator)
+            plt.legend()
+        if mode == 'show':
+            plt.show()
+        if mode == 'save':
+            create_dir(plot_fig_dir)
+            plot_fig_path = '{}/carry_dataset_statistics_{}-bit_operand.{}'.format(plot_fig_dir, operand_digits, file_format)
+            plt.savefig(plot_fig_path)
+            print('{} saved!'.format(plot_fig_path))
 
 
 def save_carry_datasets(carry_datasets, operand_digits, operator):
@@ -689,7 +732,6 @@ def import_carry_datasets(operand_digits, operator):
 
 def test_func_add_two_numbers():
     is_all_correct = True
-    operand_digits_list = [4,6,8]
     for operand_digits in operand_digits_list:
         # varying part
         result_digits = get_result_digits(operand_digits, 'add')
@@ -710,7 +752,6 @@ def test_func_add_two_numbers():
 
 def test_func_subtract_two_numbers():
     is_all_correct = True
-    operand_digits_list = [4,6,8]
     for operand_digits in operand_digits_list:
         # varying part
         result_digits = get_result_digits(operand_digits, 'subtract')
@@ -732,7 +773,6 @@ def test_func_subtract_two_numbers():
 
 def test_func_multiply_two_numbers():
     is_all_correct = True
-    operand_digits_list = [4,6,8]
     for operand_digits in operand_digits_list:
         # varying part
         result_digits = get_result_digits(operand_digits, 'multiply')
@@ -753,7 +793,6 @@ def test_func_multiply_two_numbers():
 
 def test_func_divide_two_numbers():
     is_all_correct = True
-    operand_digits_list = [4,6,8]
     for operand_digits in operand_digits_list:
         # varying part
         result_digits = get_result_digits(operand_digits, 'divide')
@@ -774,7 +813,6 @@ def test_func_divide_two_numbers():
 
 def test_func_modulo_two_numbers():
     is_all_correct = True
-    operand_digits_list = [4,6,8]
     for operand_digits in operand_digits_list:
         # varying part
         result_digits = get_result_digits(operand_digits, 'modulo')
@@ -799,7 +837,6 @@ def test_multiply_symmetric_carries():
     Result  : The number of carries is always same for a * b and b * a.
     '''
     is_all_symmetric = True
-    operand_digits_list = [4,6,8]
     for operand_digits in operand_digits_list:
         for int_dec_operand1 in range(2**operand_digits):
             for int_dec_operand2 in range(2**operand_digits):
