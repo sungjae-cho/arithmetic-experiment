@@ -50,10 +50,10 @@ def _get_carry_operand_combos(carry_operand_dict):
 def test_load_questions():
 
     for _ in range(10):
-        questions = load_questions(add=5, subtract=0, multiply=5, divide=0, modulo=0)
+        questions = load_questions(add=0, subtract=1, multiply=0, divide=1, modulo=1)
         for question_type ,question_set in questions.items():
             for question in question_set:
-                operand1, operand2, answer, carrier_num = question
+                operand1, operand2, answer, _, _ = question
                 if question_type == "add":
                     numpy.testing.assert_equal(answer, add_two_numbers(operand1, operand2)[0])
                 elif question_type == "subtract":
@@ -67,5 +67,5 @@ def test_load_questions():
                 else:
                     raise Exception
 
-#test_load_questions()
+test_load_questions()
 
