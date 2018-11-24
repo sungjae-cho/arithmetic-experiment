@@ -1,5 +1,16 @@
-MALE, FEMALE = "MALE", "FEMALE"
+import os
+from experiment_utils import load_questions
+PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
+USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
+USER_INFO_FILE = os.path.join(USER_DATA_PATH, "user_info", "user_id.txt")
+RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
+MALE, FEMALE = range(1, 3)
 BAD, OKAY, GOOD = range(1, 4)
+ADD = 5
+SUBTRACT = 5
+MULTIPLY = 5
+DIVIDE = 5
+MODULOS = 0
 
 def welcome():
     """
@@ -58,17 +69,55 @@ def get_user_data():
 
     # Make sure we have everything we need
     assert all([name, age, gender, ability])
+    print("Okay !! Let's get started !!!\n\n")
 
     return name, age, gender, ability
+
+
+def wait_for_user():
+    ready = False
+    print("You are now going to answer some binary math questions.")
+    print("These questions will involve +, -, x, / and % (modulo) operations.")
+    print("Please answer these questions as quickly and accurately as possible.")
+    print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
+    while not ready:
+        r = input("Are you ready (Y/N) ??\n\n\n")
+        ready = True if r[0].upper() == "Y" else False
+
+
+def record_results(name, age, gender, ability, results):
+    """
+    Record user id and results
+
+    return: None
+    """
+    id = get_id()
+    with open(USER_INFO_FILE, "a+") as fh:
+        fh.write("{id}={name}".format(id=id, name=name))
+
+    file_name = "{id}_{age}_{gender}_{ability}.result".format(id=id, age=age, gender=gender, ability=ability)
+    file_name = os.path.join(RESULTS_DIR, file_name)
+    with open(file_name, "wb") as fh:
+        for result in results:
+            pass
+
+
+def get_id():
+    return len(os.listdir(RESULTS_DIR)) + 1
+
+
+def run_experiment():
+    question_set = load_questions(add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE)
 
 
 def main():
 
     welcome()
     name, age, gender, ability = get_user_data()
-    print(name, age, gender, ability)
+    wait_for_user()
+    experiment_results = run_experiment()
+    record_results(name, age, gender, ability, experiment_results)
 
 
 if __name__ == "__main__":
     main()
-
