@@ -4,12 +4,15 @@ import os
 import csv # write_carry_dataset_statistics
 import pandas as pd # plot_carry_dataset_statistics
 import matplotlib.pyplot as plt # plot_carry_dataset_statistics
+import random # import_random_sampled_carry_datasets
+
 
 data_dir = 'data'
 plot_fig_dir = 'plot_figures'
 carry_dataset_statistics_name = 'carry_dataset_statistics.csv'
 operand_digits_list = [4, 6, 8]
 operators_list = ['add', 'subtract', 'multiply', 'divide', 'modulo']
+np_type = np.int
 
 
 def create_dir(directory):
@@ -76,7 +79,7 @@ def get_np_bin(str_bin, np_bin_digits):
     '''
     assert str_bin[0] != '-'
 
-    np_bin = np.zeros((np_bin_digits)) # Should be initialized as 0.
+    np_bin = np.zeros((np_bin_digits), dtype=np_type) # Should be initialized as 0.
 
     for i in range(1, len(str_bin)+1):
         np_bin[-i] = int(str_bin[-i])
@@ -189,7 +192,7 @@ def add_two_numbers(operand1, operand2):
     '''
     operand_digits = operand1.shape[0]
     result_digits = get_result_digits(operand_digits, 'add')
-    result = np.empty((result_digits))
+    result = np.empty((result_digits), dtype=np_type)
     carry = 0
     n_carries = 0
     for i in range(1, operand_digits + 1):
@@ -217,20 +220,23 @@ def subtract_two_numbers(operand1, operand2):
     '''
     operand_digits = operand1.shape[0]
     result_digits = get_result_digits(operand_digits, 'subtract')
-    result = np.empty((result_digits))
+    cp_operand1 = np.copy(operand1)
+    cp_operand2 = np.copy(operand2)
+    result = np.empty((result_digits), dtype=np_type)
     n_carries = 0
     for i in range(1, operand_digits + 1):
-        if operand1[-i] >= operand2[-i]:
-            result[-i] = operand1[-i] - operand2[-i]
+        if cp_operand1[-i] >= cp_operand2[-i]:
+            result[-i] = cp_operand1[-i] - cp_operand2[-i]
         else:
             for j in range(i + 1, operand_digits + 1):
                 n_carries = n_carries + 1
-                if operand1[-j] == 1:
-                    operand1[-j] = 0
+                if cp_operand1[-j] == 1:
+                    cp_operand1[-j] = 0
                     for k in range(i + 1, j):
-                        operand1[-k] = 1
+                        cp_operand1[-k] = 1
                     break
             result[-i] = 1
+
     return (result, n_carries)
 
 
@@ -248,11 +254,11 @@ def multiply_two_numbers(operand1, operand2):
     '''
     operand_digits = operand1.shape[0]
     result_digits = get_result_digits(operand_digits, 'multiply')
-    result = np.empty((result_digits), dtype=np.int) # To return
-    carry_buffer = np.zeros((result_digits), dtype=np.int) # To save carries while addition
+    result = np.empty((result_digits), dtype=np_type) # To return
+    carry_buffer = np.zeros((result_digits), dtype=np_type) # To save carries while addition
 
     # The multiplying phase
-    multiply_result_to_sum = np.zeros((operand_digits, result_digits), dtype=np.int)
+    multiply_result_to_sum = np.zeros((operand_digits, result_digits), dtype=np_type)
     for i in range(operand_digits):
         if operand2[-(i+1)] == 1:
             start_index = (result_digits - operand_digits - i)
@@ -288,7 +294,7 @@ def divide_two_numbers(operand1, operand2):
     '''
     operand_digits = operand1.shape[0]
     result_digits = get_result_digits(operand_digits, 'divide')
-    result = np.zeros((result_digits), dtype=np.int)
+    result = np.zeros((result_digits), dtype=np_type)
 
     leading_zeros = get_leading_zeros(operand2)
     valid_operand2_digits = operand_digits - leading_zeros
@@ -301,7 +307,7 @@ def divide_two_numbers(operand1, operand2):
         division_range = division_index + 1
 
         # Assignment: local_divide_operand1
-        local_divide_operand1 = np.zeros((division_range), np.int)
+        local_divide_operand1 = np.zeros((division_range), dtype=np_type)
         if i == 0:
             local_divide_operand1 = operand1[:division_range]
         else:
@@ -309,7 +315,7 @@ def divide_two_numbers(operand1, operand2):
             local_divide_operand1[division_index] = operand1[division_index]
 
         # Assignment: local_divide_operand2
-        local_divide_operand2 = np.zeros((division_range), np.int)
+        local_divide_operand2 = np.zeros((division_range), dtype=np_type)
         local_divide_operand2[-division_range:] = operand2[-division_range:]
 
         # Division: If condition. less_than
@@ -347,6 +353,33 @@ def modulo_two_numbers(operand1, operand2):
     _, n_carries, result = divide_two_numbers(operand1, operand2)
 
     return (result, n_carries)
+
+
+def operate_two_numbers(operand1, operand2, operator):
+    '''
+    Parameters
+    ----------
+    operand1 : np.ndarray. 1-dimension. shape==(operand_digits).
+    operand2 : np.ndarray. 1-dimension. shape==(operand_digits).
+    operator : str. ['add', 'substract', 'multiply', 'divide', 'modulo']
+
+    Returns
+    -------
+    return_vector : The reult of an operation.
+    - For division, the size of it will be 3 but the size of the others will be 2.
+    '''
+    if operator == 'add':
+        return_vector = add_two_numbers(operand1, operand2)
+    if operator == 'subtract':
+        return_vector = subtract_two_numbers(operand1, operand2)
+    if operator == 'multiply':
+        return_vector = multiply_two_numbers(operand1, operand2)
+    if operator == 'divide':
+        return_vector = divide_two_numbers(operand1, operand2)
+    if operator == 'modulo':
+        return_vector = modulo_two_numbers(operand1, operand2)
+
+    return return_vector
 
 
 def generate_datasets(operand_digits, operator):
@@ -731,6 +764,38 @@ def import_carry_datasets(operand_digits, operator):
     return carry_datasets
 
 
+def import_random_sampled_carry_datasets(operand_digits, operator, n_samples):
+    '''
+    "Import carry datasets that `n_samples` operations are sampled from each carry dataset."
+
+    Parameters
+    ----------
+    operand_digits: int. The number of digits of an operand.
+    operantor: str. one of ['add', 'substract', 'multiply', 'divide', 'modulo'].
+    n_samples : int. The number of operations to sample from each carry.
+
+    Returns
+    -------
+    carry_datasets : dict. Carry datasets that `n_samples` operations are sampled from each carry dataset.
+    - carry_datasets[n_carries]['input']: shape == (n_samples, input_dim) or (n_operations, input_dim).
+    - carry_datasets[n_carries]['output']: shape == (n_samples, output_dim) or (n_operations, output_dim).
+    - If `n_samples` > n_operations in a carry dataset, then import all operations in it.
+    '''
+    carry_datasets = import_carry_datasets(operand_digits, operator)
+    for n_carries in carry_datasets.keys():
+        n_operations = carry_datasets[n_carries]['input'].shape[0]
+
+        if n_samples > n_operations:
+            sampled_indexes = random.sample(range(n_operations), n_operations)
+        else:
+            sampled_indexes = random.sample(range(n_operations), n_samples)
+
+        carry_datasets[n_carries]['input'] = carry_datasets[n_carries]['input'][sampled_indexes,:]
+        carry_datasets[n_carries]['output'] = carry_datasets[n_carries]['output'][sampled_indexes,:]
+
+    return carry_datasets
+
+
 def test_func_add_two_numbers():
     is_all_correct = True
     for operand_digits in operand_digits_list:
@@ -849,3 +914,34 @@ def test_multiply_symmetric_carries():
                 is_equal = np.array_equal(result1, result2)
                 is_all_symmetric = is_all_symmetric and is_equal
     return is_all_symmetric
+
+
+def test_import_random_sampled_carry_datasets(n_samples=10):
+    '''
+    "To test the function `import_random_sampled_carry_datasets`"
+    '''
+    is_all_correct = True
+
+    for operand_digits in operand_digits_list:
+        for operator in operators_list:
+            carry_datasets = import_random_sampled_carry_datasets(operand_digits, operator, n_samples)
+            for n_carries in carry_datasets.keys():
+                n_operations = carry_datasets[n_carries]['input'].shape[0]
+                for i_operation in range(n_operations):
+                    operand1 = carry_datasets[n_carries]['input'][i_operation, :operand_digits]
+                    operand2 = carry_datasets[n_carries]['input'][i_operation, operand_digits:]
+                    result = carry_datasets[n_carries]['output'][i_operation, :]
+
+                    result_by_computing = operate_two_numbers(operand1, operand2, operator)[0] # Get the first element
+
+                    is_equal = np.array_equal(result, result_by_computing)
+                    if not is_equal:
+                        print(operand1)
+                        print(operand2)
+                        print(result)
+                        print(result_by_computing)
+                        print('================')
+
+                    is_all_correct = is_all_correct and is_equal
+
+    return is_all_correct
