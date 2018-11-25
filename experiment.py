@@ -35,18 +35,21 @@ def get_user_data():
     while not info_correct:
         name = ""
         while not name:
-            name = input("Please enter your name :\t")
+            print("Please enter your name :")
+            name = input().strip()
         print("Thank You!!\n")
 
         age = ""
         # Make sure age is valid assuming no one is over 100
         while age.isdigit() is False or len(age) > 2:
-            age = input("Please enter your age :\t").strip()
+            print("Please enter your age :")
+            age = input().strip()
         print("Great !!\n")
 
         gender = None
         while not gender:
-            g = input("Are you male or female (M/F) :\t").strip()
+            print("Are you male or female (M/F) :")
+            g = input().strip()
             if not g or g[0].upper() not in ["M", "F"]:
                 continue
 
@@ -59,14 +62,16 @@ def get_user_data():
         print("2: Average")
         print("1: Below Average")
         while not ability:
-            ab = input("Please enter ability level here :\t").strip()
+            print("Please enter ability level here :")
+            ab = input().strip()
             if not ab.isdigit() or int(ab) not in [GOOD, OKAY, BAD]:
                 continue
 
             ability = int(ab)
         print("Fantastic\n")
 
-        c = input("Have you entered all your input correct (Y/N):\t").strip()
+        print("Have you entered all your input correct (Y/N):\t")
+        c = input().strip()
         info_correct = True if c and c[0].upper() == "Y" else False
 
     # Make sure we have everything we need
@@ -83,7 +88,8 @@ def wait_for_user():
     print("Please answer these questions as quickly and accurately as possible.")
     print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
     while not ready:
-        r = input("Are you ready (Y/N) ??\t")
+        print("Are you ready (Y/N) ??")
+        r = input().strip()
         ready = True if r and r[0].upper() == "Y" else False
 
 
@@ -116,7 +122,8 @@ def run_experiment():
     while question_set:
         ready = False
         while not ready:
-            r = input("Are you ready for next question (Y/N) ??")
+            print("Are you ready for next question (Y/N) ??")
+            r = input().strip()
             ready = True if r and r[0].upper() == "Y" else False
         question_type = random.choice(list(question_set.keys()))
         operand1, operand2, answer, num_carries, qid = _get_question(question_set, question_type)
@@ -129,13 +136,15 @@ def run_experiment():
 
 
 def ask_question(question_type, operand1, operand2, answer, num_carries, qid):
-    print("{operand1}".format(operand1=operand1).rjust(30))
-    print("{operation} {operand2}".format(operation=OPERATION_DICT[question_type.upper()], operand2=operand2).rjust(30))
+    print()
+    print("{operand1}".format(operand1=" ".join(str(d) for d in operand1)).rjust(30))
+    print("{operation} {operand2}".format(operation=OPERATION_DICT[question_type.upper()], operand2=" ".join(str(d) for d in operand2)).rjust(30))
     print("-" * 30)
     start_time = time.time()
     valid_answer = False
     while not valid_answer:
-        user_answer = input("Your answer: ").replace(" ", "")
+        print("Your answer: ")
+        user_answer = input().replace(" ", "")
         valid_answer = _valid_answer(user_answer)
     duration = time.time() - start_time
     correct = validate_answer(answer, user_answer)

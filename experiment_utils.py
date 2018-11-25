@@ -3,8 +3,8 @@ import numpy
 from itertools import cycle
 from random import shuffle, choice
 QUESTION_TYPE = ["add", "subtract", "multiply", "divide", "modulo"]
-DIGIT_OPERANDS_CARRIES = {3: [1, 2],
-                          5: [1, 2, 3, 4],
+DIGIT_OPERANDS_CARRIES = {2: [0],
+                          3: [1, 2],
                           4: [1, 2, 3]}
 
 
@@ -48,20 +48,26 @@ def _get_carry_operand_combos(carry_operand_dict):
 def test_load_questions():
 
     for _ in range(10):
-        questions = load_questions(add=5, subtract=5, multiply=5, divide=5, modulo=5)
-        for question_type ,question_set in questions.items():
+        questions = load_questions(add=10, subtract=10, multiply=10, divide=10, modulo=10)
+        for question_type, question_set in questions.items():
             for question in question_set:
                 operand1, operand2, answer, _, _ = question
+                int1, int2, int_answer = binary2decimal(operand1), binary2decimal(operand2), binary2decimal(answer)
                 if question_type == "add":
                     numpy.testing.assert_equal(answer, add_two_numbers(operand1, operand2)[0])
+                    assert int1 + int2 == int_answer
                 elif question_type == "subtract":
                     numpy.testing.assert_equal(answer, subtract_two_numbers(operand1, operand2)[0])
+                    assert int1 - int2 == int_answer
                 elif question_type == "multiply":
                     numpy.testing.assert_equal(answer, multiply_two_numbers(operand1, operand2)[0])
+                    assert int1 * int2 == int_answer
                 elif question_type == "divide":
                     numpy.testing.assert_equal(answer, divide_two_numbers(operand1, operand2)[0])
+                    assert int1 // int2 == int_answer
                 elif question_type == "modulo":
                     numpy.testing.assert_equal(answer, modulo_two_numbers(operand1, operand2)[0])
+                    assert int1 % int2 == int_answer
                 else:
                     raise Exception
 
