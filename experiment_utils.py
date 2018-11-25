@@ -19,16 +19,14 @@ def load_questions(add=0, subtract=0, multiply=0, divide=0, modulo=0):
         carry_digit_combos = _get_carry_operand_combos(DIGIT_OPERANDS_CARRIES)
         shuffle(carry_digit_combos)
         question_iterator = cycle(carry_digit_combos)
-        chosen_indices = []
         for _ in range(num_questions):
             carrier_num, digit_operants = next(question_iterator)
             if digit_operants not in question_set.keys():
                 question_set[digit_operants] = generate_datasets(digit_operants, question_type)
 
-            question_index = None
-            while question_index is None or question_index in chosen_indices:
-                question_index = choice(range(len(question_set[digit_operants][carrier_num]["input"])))
-            chosen_indices.append(question_index)
+            possible_indices = list(range(len(question_set[digit_operants][carrier_num]["input"])))
+            question_index = choice(possible_indices)
+            possible_indices.pop(question_index)
             question = question_set[digit_operants][carrier_num]["input"][question_index]
             answer = question_set[digit_operants][carrier_num]["output"][question_index]
             if question_type in questions:
@@ -50,7 +48,7 @@ def _get_carry_operand_combos(carry_operand_dict):
 def test_load_questions():
 
     for _ in range(10):
-        questions = load_questions(add=0, subtract=1, multiply=0, divide=1, modulo=1)
+        questions = load_questions(add=5, subtract=5, multiply=5, divide=5, modulo=5)
         for question_type ,question_set in questions.items():
             for question in question_set:
                 operand1, operand2, answer, _, _ = question
@@ -66,6 +64,12 @@ def test_load_questions():
                     numpy.testing.assert_equal(answer, modulo_two_numbers(operand1, operand2)[0])
                 else:
                     raise Exception
+
+
+def binary2decimal(binary_array):
+
+    return int("".join([str(int(i)) for i in binary_array]), 2)
+
 
 test_load_questions()
 

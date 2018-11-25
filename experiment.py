@@ -7,10 +7,10 @@ RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
 MALE, FEMALE = range(1, 3)
 BAD, OKAY, GOOD = range(1, 4)
 ADD = 5
-SUBTRACT = 0
+SUBTRACT = 5
 MULTIPLY = 5
-DIVIDE = 0
-MODULO = 0
+DIVIDE = 5
+MODULO = 5
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
 
 
