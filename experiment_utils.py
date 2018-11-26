@@ -3,9 +3,9 @@ import numpy
 from itertools import cycle
 from random import shuffle, choice
 QUESTION_TYPE = ["add", "subtract", "multiply", "divide", "modulo"]
-DIGIT_OPERANDS_CARRIES = {2: [0],
-                          3: [1, 2],
-                          4: [1, 2, 3]}
+DIGIT_OPERANDS_CARRIES = {2: [10],
+                          3: [1, 5],
+                          4: [1, 2, 7]}
 
 
 def load_questions(add=0, subtract=0, multiply=0, divide=0, modulo=0):
@@ -24,6 +24,8 @@ def load_questions(add=0, subtract=0, multiply=0, divide=0, modulo=0):
             if digit_operants not in question_set.keys():
                 question_set[digit_operants] = generate_datasets(digit_operants, question_type)
 
+            carrier_num = carrier_num if carrier_num in question_set[digit_operants].keys() \
+                else max(question_set[digit_operants].keys())
             possible_indices = list(range(len(question_set[digit_operants][carrier_num]["input"])))
             question_index = choice(possible_indices)
             possible_indices.pop(question_index)
