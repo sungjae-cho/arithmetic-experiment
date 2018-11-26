@@ -119,9 +119,13 @@ def get_id():
 def run_experiment():
     question_set = load_questions(add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     results = []
+    total_nun_questions = sum([len(qs) for qs in question_set.values()])
     while question_set:
+        completed_questions = total_nun_questions - sum([len(qs) for qs in question_set.values()])
         ready = False
         while not ready:
+            print("Completed {completed}/{total} questions".format(completed=completed_questions, total=total_nun_questions))
+            print("Completed {percentage}% of quiz".format(percentage=round(completed_questions/float(total_nun_questions) * 100, 2)))
             print("Are you ready for next question (Y/N) ??")
             r = input().strip()
             ready = True if r and r[0].upper() == "Y" else False
