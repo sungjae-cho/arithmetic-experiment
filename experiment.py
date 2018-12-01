@@ -1,16 +1,19 @@
-from experiment_utils import load_questions
-import random, time, os, numpy
+from experiment_utils import evenly_load_questions
+import random, time, os, numpy, datetime
 PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
-USER_INFO_FILE = os.path.join(USER_DATA_PATH, "user_info", "user_id.txt")
 RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
 MALE, FEMALE = range(1, 3)
-BAD, OKAY, GOOD = range(1, 4)
-ADD = 5
-SUBTRACT = 5
-MULTIPLY = 5
-DIVIDE = 5
-MODULO = 5
+BAD, BAVERAGE, AAVERAGE, GOOD = range(1, 5)
+# Please use the # specified values to specify the correct number of questions
+ADD = 0 # 8
+SUBTRACT = 0 # 10
+MULTIPLY = 0 # 5
+DIVIDE = 10 # 10
+MODULO = 0 # 10
+QUESTION_SET = "DIVIDE"
+DIGIT_OPERANDS = 4
+
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
 
 
@@ -33,17 +36,12 @@ def get_user_data():
     """
     info_correct = False
     while not info_correct:
-        name = ""
-        while not name:
-            print("Please enter your name :")
-            name = input().strip()
-        print("Thank You!!\n")
 
-        age = ""
+        year = ""
         # Make sure age is valid assuming no one is over 100
-        while age.isdigit() is False or len(age) > 2:
-            print("Please enter your age :")
-            age = input().strip()
+        while not _valid_birth_year(year):
+            print("Please enter your birth year :")
+            year = input().strip()
         print("Great !!\n")
 
         gender = None
@@ -58,13 +56,14 @@ def get_user_data():
 
         ability = None
         print("How would you rate your math ability on a scale of 1 -> 3")
+        print("4: Very Good")
         print("3: Above Average")
-        print("2: Average")
-        print("1: Below Average")
+        print("2: Below Average")
+        print("1: Very Bad")
         while not ability:
             print("Please enter ability level here :")
             ab = input().strip()
-            if not ab.isdigit() or int(ab) not in [GOOD, OKAY, BAD]:
+            if not ab.isdigit() or int(ab) not in [BAD, BAVERAGE, AAVERAGE, GOOD]:
                 continue
 
             ability = int(ab)
@@ -75,16 +74,20 @@ def get_user_data():
         info_correct = True if c and c[0].upper() == "Y" else False
 
     # Make sure we have everything we need
-    assert all([name, age, gender, ability])
+    assert all([year, gender, ability])
     print("Okay !! Let's get started !!!\n\n")
 
-    return name, age, gender, ability
+    return year, gender, ability
+
+
+def _valid_birth_year(year):
+    return year.isdigit() and (1920 < int(year) < 2005)
 
 
 def wait_for_user():
     ready = False
     print("You are now going to answer some binary math questions.")
-    print("These questions will involve +, -, x, / and % (modulo) operations.")
+    print("These questions will involve {0} operations.".format(QUESTION_SET))
     print("Please answer these questions as quickly and accurately as possible.")
     print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
     while not ready:
@@ -93,17 +96,14 @@ def wait_for_user():
         ready = True if r and r[0].upper() == "Y" else False
 
 
-def record_results(name, age, gender, ability, results):
+def record_results(year, gender, ability, results):
     """
     Record user id and results
 
     return: None
     """
-    id = get_id()
-    with open(USER_INFO_FILE, "a+") as fh:
-        fh.write("{id}={name}\n".format(id=id, name=name))
-
-    file_name = "{id}_{age}_{gender}_{ability}.result".format(id=id, age=age, gender=gender, ability=ability)
+    id = str(datetime.datetime.utcnow())[:-7].replace(" ", "_").replace(":", "_")
+    file_name = "{id}_{year}_{gender}_{ability}.result".format(id=id, year=year, gender=gender, ability=ability)
     file_name = os.path.join(RESULTS_DIR, file_name)
     with open(file_name, "w+") as fh:
         for result in results:
@@ -112,12 +112,8 @@ def record_results(name, age, gender, ability, results):
             fh.write(result_string)
 
 
-def get_id():
-    return len(os.listdir(RESULTS_DIR)) + 1
-
-
 def run_experiment():
-    question_set = load_questions(add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
+    question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     results = []
     total_nun_questions = sum([len(qs) for qs in question_set.values()])
     while question_set:
@@ -140,17 +136,23 @@ def run_experiment():
 
 
 def ask_question(question_type, operand1, operand2, answer, num_carries, qid):
-    print()
-    print("{operand1}".format(operand1=" ".join(str(d) for d in operand1)).rjust(30))
-    print("{operation} {operand2}".format(operation=OPERATION_DICT[question_type.upper()], operand2=" ".join(str(d) for d in operand2)).rjust(30))
-    print("-" * 30)
+    if question_type in ["modulo", "divide"]:
+        print()
+        print("┌{0}".format("─" * (2 * len(operand2) - 1)).rjust(30))
+        print("{operand2} ┃{operand1}".format(operand1=" ".join(str(d) for d in operand1), operand2=" ".join(str(d) for d in operand2)).rjust(30))
+        print("-" * 30)
+    else:
+        print()
+        print("{operand1}".format(operand1=" ".join(str(d) for d in operand1)).rjust(30))
+        print("{operation} {operand2}".format(operation=OPERATION_DICT[question_type.upper()], operand2=" ".join(str(d) for d in operand2)).rjust(30))
+        print("-" * 30)
     start_time = time.time()
     valid_answer = False
     while not valid_answer:
         print("Your answer: ")
         user_answer = input().replace(" ", "")
         valid_answer = _valid_answer(user_answer)
-    duration = time.time() - start_time
+    duration = round(time.time() - start_time, 3)
     correct = validate_answer(answer, user_answer)
     string_answer = "".join([str(int(i)) for i in answer])
     if correct:
@@ -200,10 +202,10 @@ def _get_question(question_set, question_type):
 def main():
 
     welcome()
-    name, age, gender, ability = get_user_data()
+    year, gender, ability = get_user_data()
     wait_for_user()
     experiment_results = run_experiment()
-    record_results(name, age, gender, ability, experiment_results)
+    record_results(year, gender, ability, experiment_results)
 
 
 if __name__ == "__main__":
