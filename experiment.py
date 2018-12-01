@@ -126,6 +126,7 @@ def run_experiment():
             r = input().strip()
             ready = True if r and r[0].upper() == "Y" else False
         question_type = random.choice(list(question_set.keys()))
+        os.system("clear")
         operand1, operand2, answer, num_carries, qid = _get_question(question_set, question_type)
         result = ask_question(question_type, operand1, operand2, answer, num_carries, qid)
         results.append(result)
