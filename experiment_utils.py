@@ -1,57 +1,50 @@
 from data_utils import *
 import numpy
-from itertools import cycle
 from random import shuffle, choice
 QUESTION_TYPE = ["add", "subtract", "multiply", "divide", "modulo"]
-DIGIT_OPERANDS_CARRIES = {2: [10],
-                          3: [1, 5],
-                          4: [1, 2, 7]}
+TEST_DIGIT_OPERANDS = 4
+NUM_TEST_QUESTIONS_PER_CARRY = 10
 
 
-def load_questions(add=0, subtract=0, multiply=0, divide=0, modulo=0):
+def evenly_load_questions(digit_operands, add=0, subtract=0, multiply=0, divide=0, modulo=0):
+    """
+    This method will use a sample by replacement technique to provide the given number of questions
+    for each num_carry sub dataset for that operation with the given number of digit_operands
+    """
     question_nums = [add, subtract, multiply, divide, modulo]
     questions = {}
     for num_questions, question_type in zip(question_nums, QUESTION_TYPE):
         if not num_questions:
             continue
 
-        question_set = {}
-        carry_digit_combos = _get_carry_operand_combos(DIGIT_OPERANDS_CARRIES)
-        shuffle(carry_digit_combos)
-        question_iterator = cycle(carry_digit_combos)
-        for _ in range(num_questions):
-            carrier_num, digit_operants = next(question_iterator)
-            if digit_operants not in question_set.keys():
-                question_set[digit_operants] = generate_datasets(digit_operants, question_type)
+        questions[question_type] = []
+        question_set = generate_datasets(digit_operands, question_type)
+        all_carries = question_set.keys()
 
-            carrier_num = carrier_num if carrier_num in question_set[digit_operants].keys() \
-                else max(question_set[digit_operants].keys())
-            possible_indices = list(range(len(question_set[digit_operants][carrier_num]["input"])))
-            question_index = choice(possible_indices)
-            possible_indices.pop(question_index)
-            question = question_set[digit_operants][carrier_num]["input"][question_index]
-            answer = question_set[digit_operants][carrier_num]["output"][question_index]
-            if question_type in questions:
-                questions[question_type].append((question[:digit_operants], question[digit_operants:], answer, carrier_num, question_index))
-            else:
-                questions[question_type] = [(question[:digit_operants], question[digit_operants:], answer, carrier_num, question_index)]
+        for num_carries in all_carries:
+            num_q = num_questions
+            chosen_indices = []
+            possible_indices = list(range(len(question_set[num_carries]["input"])))
+            while len(possible_indices) < num_q:
+                chosen_indices += possible_indices
+                num_q -= len(possible_indices)
+            chosen_indices = chosen_indices + \
+                     [possible_indices.pop(choice(range(len(possible_indices)))) for _ in range(num_q)]
+            shuffle(chosen_indices)
+            question_nums = [question_set[num_carries]["input"][index] for index in chosen_indices]
+            answer_nums = [question_set[num_carries]["output"][index] for index in chosen_indices]
+            for q, a, i in zip(question_nums, answer_nums, chosen_indices):
+                questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
+        shuffle(questions[question_type])
     return questions
 
 
-def _get_carry_operand_combos(carry_operand_dict):
-
-    combo_list = []
-    for operand_digits, carries in carry_operand_dict.items():
-        for carry in carries:
-            combo_list.append((carry, operand_digits))
-    return combo_list
-
-
-def test_load_questions():
+def test_evenly_load_questions_loads_valid_questions():
 
     for _ in range(10):
-        questions = load_questions(add=10, subtract=10, multiply=10, divide=10, modulo=10)
+        questions = evenly_load_questions(TEST_DIGIT_OPERANDS, add=10, subtract=10, multiply=10, divide=10, modulo=10)
         for question_type, question_set in questions.items():
+
             for question in question_set:
                 operand1, operand2, answer, _, _ = question
                 int1, int2, int_answer = binary2decimal(operand1), binary2decimal(operand2), binary2decimal(answer)
@@ -75,9 +68,48 @@ def test_load_questions():
 
 
 def binary2decimal(binary_array):
-
     return int("".join([str(int(i)) for i in binary_array]), 2)
 
 
-test_load_questions()
+def test_evenly_load_questions_loads_correct_number_of_questions():
+
+    for question_type in QUESTION_TYPE:
+        kwargs = {"add": 0, "subtract": 0, "multiply": 0, "divide": 0, "modulo": 0}
+        kwargs[question_type] = NUM_TEST_QUESTIONS_PER_CARRY
+        questions = evenly_load_questions(TEST_DIGIT_OPERANDS, **kwargs)
+        actual_question_set = generate_datasets(TEST_DIGIT_OPERANDS, question_type)
+        assert len(actual_question_set.keys()) * NUM_TEST_QUESTIONS_PER_CARRY == len(questions[question_type])
+
+
+def test_question_indices_map_back_to_correct_questions():
+
+    for question_type in QUESTION_TYPE:
+        kwargs = {"add": 0, "subtract": 0, "multiply": 0, "divide": 0, "modulo": 0}
+        kwargs[question_type] = NUM_TEST_QUESTIONS_PER_CARRY
+        questions = evenly_load_questions(TEST_DIGIT_OPERANDS, **kwargs)
+        actual_question_set = generate_datasets(TEST_DIGIT_OPERANDS, question_type)
+        for operand1, operand2, answer, num_carries, index in questions[question_type]:
+            numpy.testing.assert_equal(operand1, actual_question_set[num_carries]["input"][index][:TEST_DIGIT_OPERANDS])
+            numpy.testing.assert_equal(operand2, actual_question_set[num_carries]["input"][index][TEST_DIGIT_OPERANDS:])
+            numpy.testing.assert_equal(answer, actual_question_set[num_carries]["output"][index])
+
+
+def test_sample_with_replacement():
+    for _ in range(10):
+        questions = evenly_load_questions(TEST_DIGIT_OPERANDS, multiply=NUM_TEST_QUESTIONS_PER_CARRY)
+        actual_question_set = generate_datasets(TEST_DIGIT_OPERANDS, "multiply")
+        total_indices_chosen_per_carry = {key: [] for key in actual_question_set.keys()}
+        for _, _, _, num_carries, index in questions["multiply"]:
+            total_indices_chosen_per_carry[num_carries].append(index)
+        for num_carries in actual_question_set.keys():
+            if NUM_TEST_QUESTIONS_PER_CARRY <= len(actual_question_set[num_carries]["output"]):
+                assert len(total_indices_chosen_per_carry[num_carries]) == len(set(total_indices_chosen_per_carry[num_carries]))
+            else:
+                assert len(total_indices_chosen_per_carry[num_carries]) != len(set(total_indices_chosen_per_carry[num_carries]))
+                assert len(total_indices_chosen_per_carry[num_carries]) == NUM_TEST_QUESTIONS_PER_CARRY
+
+test_evenly_load_questions_loads_valid_questions()
+test_evenly_load_questions_loads_correct_number_of_questions()
+test_question_indices_map_back_to_correct_questions()
+test_sample_with_replacement()
 
