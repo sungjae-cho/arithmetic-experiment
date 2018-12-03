@@ -2,7 +2,8 @@ from experiment_utils import evenly_load_questions
 import random, time, os, numpy, datetime
 PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
-RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
+ACTUAL_RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
+PRACTICE_RESULTS_DIR = os.path.join(USER_DATA_PATH, ".practice_results")
 MALE, FEMALE = range(1, 3)
 BAD, BAVERAGE, AAVERAGE, GOOD = range(1, 5)
 # Please use the # specified values to specify the correct number of questions
@@ -13,7 +14,9 @@ DIVIDE = 10 # 10
 MODULO = 0 # 10
 QUESTION_SET = "DIVIDE"
 DIGIT_OPERANDS = 4
+PRACTICE = True
 
+RESULTS_DIR = PRACTICE_RESULTS_DIR if PRACTICE else ACTUAL_RESULTS_DIR
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
 
 
