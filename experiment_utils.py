@@ -109,8 +109,40 @@ def test_sample_with_replacement():
                 assert len(total_indices_chosen_per_carry[num_carries]) == NUM_TEST_QUESTIONS_PER_CARRY
 
 
-test_evenly_load_questions_loads_valid_questions()
-test_evenly_load_questions_loads_correct_number_of_questions()
-test_question_indices_map_back_to_correct_questions()
-test_sample_with_replacement()
+def test_files_give_correct_output():
+    from experiment import PRACTICE_RESULTS_DIR
+    datasets = {}
+    for result_file in os.listdir(PRACTICE_RESULTS_DIR):
+        if not result_file or "_.txt" in result_file:
+            continue
+        with open(os.path.join(PRACTICE_RESULTS_DIR, result_file)) as fh:
+            for line in fh:
+                line_info = [i for i in line.split() if i]
+                index, correct, time, user_answer, correct_answer, operand_digits, question_type, num_carries = line_info
+                correct = True if correct == "True" else False
+                index, operand_digits, num_carries = int(index), int(operand_digits), int(num_carries)
+                user_answer = [int(i) for i in list(user_answer.strip())]
+                correct_answer = [int(j) for j in list(correct_answer.strip())]
+                if question_type not in datasets.keys():
+                    datasets[question_type] = {}
+                if operand_digits not in datasets[question_type]:
+                    datasets[question_type][operand_digits] = generate_datasets(operand_digits, question_type)
+                # Make sure if we mark answer correct they actually are correct
+                if correct:
+                    assert binary2decimal(user_answer) == binary2decimal(correct_answer)
+                else:
+                    assert binary2decimal(user_answer) != binary2decimal(correct_answer)
+
+                # Now make sure the correct answer matches with our stored correct answer
+                stored_answer = datasets[question_type][operand_digits][num_carries]["output"][index]
+                assert binary2decimal(correct_answer) == binary2decimal(stored_answer)
+
+
+if __name__ == "__main__":
+    test_files_give_correct_output()
+    test_evenly_load_questions_loads_valid_questions()
+    test_evenly_load_questions_loads_correct_number_of_questions()
+    test_question_indices_map_back_to_correct_questions()
+    test_sample_with_replacement()
+
 
