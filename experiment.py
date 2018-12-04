@@ -58,7 +58,7 @@ def get_user_data():
         print("Excellent\n")
 
         ability = None
-        print("How would you rate your math ability on a scale of 1 -> 3")
+        print("How would you rate your math ability on a scale of 1 -> 4")
         print("4: Very Good")
         print("3: Above Average")
         print("2: Below Average")
