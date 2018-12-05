@@ -19,6 +19,11 @@ PRACTICE = True
 RESULTS_DIR = PRACTICE_RESULTS_DIR if PRACTICE else ACTUAL_RESULTS_DIR
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
 
+class ImBored(Exception):
+
+    def __init__(self, results):
+        super(ImBored, self).__init__("Thank you for our time ^^")
+        self.results = results
 
 def welcome():
     """
@@ -93,6 +98,8 @@ def wait_for_user():
     print("These questions will involve {0} operations.".format(QUESTION_SET))
     print("Please answer these questions as quickly and accurately as possible.")
     print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
+    print("You can leave the experiment anytime by typing 'QUIT' in response to the "
+          "'Are you ready for next question (Y/N) ??' question")
     while not ready:
         print("Are you ready (Y/N) ??")
         r = input().strip()
@@ -115,24 +122,34 @@ def record_results(year, gender, ability, results):
             fh.write(result_string)
 
 
+def evaluate_readiness(input, results):
+    if input.upper() == "QUIT":
+        raise ImBored(results)
+    return True if input and input[0].upper() == "Y" else False
+
+
 def run_experiment():
     question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     results = []
     total_nun_questions = sum([len(qs) for qs in question_set.values()])
-    while question_set:
-        completed_questions = total_nun_questions - sum([len(qs) for qs in question_set.values()])
-        ready = False
-        while not ready:
-            print("Completed {completed}/{total} questions".format(completed=completed_questions, total=total_nun_questions))
-            print("Completed {percentage}% of quiz".format(percentage=round(completed_questions/float(total_nun_questions) * 100, 2)))
-            print("Are you ready for next question (Y/N) ??")
-            r = input().strip()
-            ready = True if r and r[0].upper() == "Y" else False
-        question_type = random.choice(list(question_set.keys()))
-        os.system("clear")
-        operand1, operand2, answer, num_carries, qid = _get_question(question_set, question_type)
-        result = ask_question(question_type, operand1, operand2, answer, num_carries, qid)
-        results.append(result)
+    try:
+        while question_set:
+            completed_questions = total_nun_questions - sum([len(qs) for qs in question_set.values()])
+            ready = False
+            while not ready:
+                print("Completed {completed}/{total} questions".format(completed=completed_questions, total=total_nun_questions))
+                print("Completed {percentage}% of quiz".format(percentage=round(completed_questions/float(total_nun_questions) * 100, 2)))
+                print("Are you ready for next question (Y/N) ??")
+                r = input().strip()
+                ready = evaluate_readiness(r, results=results)
+            question_type = random.choice(list(question_set.keys()))
+            os.system("clear")
+            operand1, operand2, answer, num_carries, qid = _get_question(question_set, question_type)
+            result = ask_question(question_type, operand1, operand2, answer, num_carries, qid)
+            results.append(result)
+    except ImBored as e:
+        print(e)
+        results = e.results
     print("\n Great Job: You got {correct}/{total}".format(correct=len([1 for result in results if result["correct"]]),
                                                            total=len(results)))
     print("Thank You !!!")
