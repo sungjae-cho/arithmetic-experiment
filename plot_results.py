@@ -154,7 +154,7 @@ def plot_solving_time(df_result, subject_index):
     plt.clf()
 
 
-def plot_solving_time_by_carries(df_result, subject_index, mode='save', file_format='pdf'):
+def plot_solving_time_for_carries(df_result, subject_index, mode='save', file_format='pdf'):
     # Retrieve the operator from the first row.
     operator = df_result['operator'][0]
 
@@ -197,7 +197,268 @@ def plot_solving_time_by_carries(df_result, subject_index, mode='save', file_for
     plt.clf()
 
 
-def plot_mean_solving_time(mode='save', file_format='pdf'):
+def plot_accuracy_by_operator(mode='save', file_format='pdf'):
+
+    total_accuracy = get_accuracy(groupby_operator=False, groupby_carries=False)
+    accuracy_by_operator = get_accuracy(groupby_operator=True, groupby_carries=False)
+
+    x = ('Add', 'Subtract', 'Multiply', 'Divide', 'Modulo')
+    y = (accuracy_by_operator['add'],
+        accuracy_by_operator['subtract'],
+        accuracy_by_operator['multiply'],
+        accuracy_by_operator['divide'],
+        accuracy_by_operator['modulo']
+    )
+
+    plt.ylim(0.0, 1.0)
+    plt.yticks(np.arange(0, 1.1, step=0.1))
+    plt.grid(axis='y')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy by operator')
+
+    plt.plot(x, y, ':o', label='Each operator')
+    #plt.bar(x, y, align='center')
+    plt.hlines(total_accuracy, xmin=-0.5, xmax=len(x)-0.5, colors='r', label='All operators')
+    plt.legend()
+
+    if mode == 'show':
+        plt.show()
+    if mode == 'save':
+        create_dir(plot_fig_dir)
+        plot_fig_path = '{plot_dir}/accuracy_by_operator.{extension}'.format(
+            plot_dir=plot_fig_dir,
+            extension=file_format
+        )
+        plt.savefig(plot_fig_path)
+    plt.clf()
+
+
+def plot_accuracy_by_carries(mode='save', file_format='pdf'):
+
+    accuracy_by_operator = get_accuracy(groupby_operator=True, groupby_carries=False)
+    accuracy_by_carries = get_accuracy(groupby_operator=True, groupby_carries=True)
+
+    for operator in operators:
+
+        carries_list = list(accuracy_by_carries[operator].keys())
+        x = [str(carries) for carries in carries_list]
+        y = list(accuracy_by_carries[operator].get_values())
+
+        plt.ylim(0.0, 1.0)
+        plt.yticks(np.arange(0, 1.1, step=0.1))
+        plt.grid(axis='y')
+        plt.ylabel('Accuracy')
+        plt.title('[{operator}] Accuracy by carries'.format(operator=operator.capitalize()))
+
+        #plt.bar(x, y, align='center')
+        plt.plot(x, y, ':o', label='Carry datasets')
+        plt.hlines(accuracy_by_operator[operator],
+            xmin=-0.5, xmax=len(x)-0.5, colors='r',
+            label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
+        plt.legend()
+
+        if mode == 'show':
+            plt.show()
+        if mode == 'save':
+            create_dir(plot_fig_dir)
+            plot_fig_path = '{plot_dir}/accuracy_by_carries_{operator}.{extension}'.format(
+                plot_dir=plot_fig_dir,
+                operator=operator,
+                extension=file_format
+            )
+            plt.savefig(plot_fig_path)
+        plt.clf()
+
+
+# TODO: Implement!
+def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
+
+    total_mean_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
+    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+
+    x = ('Add', 'Subtract', 'Multiply', 'Divide', 'Modulo')
+    y = (mean_solving_time_by_operator['add'],
+        mean_solving_time_by_operator['subtract'],
+        mean_solving_time_by_operator['multiply'],
+        mean_solving_time_by_operator['divide'],
+        mean_solving_time_by_operator['modulo']
+    )
+
+    plt.ylim(0.0, 60.0)
+    #plt.yticks(np.arange(0, 1.1, step=0.1))
+    plt.grid(axis='y')
+    plt.ylabel('Mean solving time (sec.)')
+    plt.title('Mean solving time by operator')
+
+    plt.plot(x, y, ':o', label='Each operator')
+    #plt.bar(x, y, align='center')
+    plt.hlines(total_mean_solving_time, xmin=-0.5, xmax=len(x)-0.5, colors='r', label='All operators')
+    plt.legend()
+
+    if mode == 'show':
+        plt.show()
+    if mode == 'save':
+        create_dir(plot_fig_dir)
+        plot_fig_path = '{plot_dir}/mean_solving_time_by_operator.{extension}'.format(
+            plot_dir=plot_fig_dir,
+            extension=file_format
+        )
+        plt.savefig(plot_fig_path)
+    plt.clf()
+
+
+def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
+
+    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+    mean_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)
+
+    for operator in operators:
+
+        carries_list = list(mean_solving_time_by_carries[operator].keys())
+        x = [str(carries) for carries in carries_list]
+        y = list(mean_solving_time_by_carries[operator].get_values())
+
+        plt.ylim(0.0, 60.0)
+        #plt.yticks(np.arange(0, 1.1, step=0.1))
+        plt.grid(axis='y')
+        plt.ylabel('Mean solving time (sec.)')
+        plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
+
+        #plt.bar(x, y, align='center')
+        plt.plot(x, y, ':o', label='Carry datasets')
+        plt.hlines(mean_solving_time_by_operator[operator],
+            xmin=-0.5, xmax=len(x)-0.5, colors='r',
+            label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
+        plt.legend()
+
+        if mode == 'show':
+            plt.show()
+        if mode == 'save':
+            create_dir(plot_fig_dir)
+            plot_fig_path = '{plot_dir}/mean_solving_time_by_carries_{operator}.{extension}'.format(
+                plot_dir=plot_fig_dir,
+                operator=operator,
+                extension=file_format
+            )
+            plt.savefig(plot_fig_path)
+        plt.clf()
+
+
+def plot_solving_time_by_operator(mode='save', file_format='pdf'):
+
+    total_mean_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
+    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+
+    total_result = get_total_result()['solving_time'].get_values()
+    total_result_add = get_total_result('add')['solving_time'].get_values()
+    total_result_subtract = get_total_result('subtract')['solving_time'].get_values()
+    total_result_multiply = get_total_result('multiply')['solving_time'].get_values()
+    total_result_divide = get_total_result('divide')['solving_time'].get_values()
+    total_result_modulo = get_total_result('modulo')['solving_time'].get_values()
+
+    max_solving_time = total_result.max()
+
+    x_labels = ['All', 'Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
+    x = np.arange(0,len(x_labels))
+
+    y_mean = (total_mean_solving_time,
+        mean_solving_time_by_operator['add'],
+        mean_solving_time_by_operator['subtract'],
+        mean_solving_time_by_operator['multiply'],
+        mean_solving_time_by_operator['divide'],
+        mean_solving_time_by_operator['modulo']
+    )
+
+    plt.figure(figsize=(8,8))
+
+    max_ylim = int(np.ceil(max_solving_time / 10) * 10)
+    plt.ylim(0.0, max_ylim)
+    plt.yticks([0, 10, 20, 30, 40, 50] + list(range(60,max_ylim,30)))
+
+    plt.grid(axis='y')
+    plt.title('Solving time by operator')
+    plt.ylabel('Solving time (sec.)')
+    plt.xlabel('Operator')
+
+    plt.boxplot([total_result,
+                    total_result_add,
+                    total_result_subtract,
+                    total_result_multiply,
+                    total_result_divide,
+                    total_result_modulo],
+                labels=x_labels,
+                positions=x
+    )
+    plt.plot(x, y_mean, 'r:o', label='Mean solving time')
+
+    plt.legend()
+
+    if mode == 'show':
+        plt.show()
+    if mode == 'save':
+        create_dir(plot_fig_dir)
+        plot_fig_path = '{plot_dir}/solving_time_by_operator.{extension}'.format(
+            plot_dir=plot_fig_dir,
+            extension=file_format
+        )
+        plt.savefig(plot_fig_path)
+    plt.clf()
+
+
+# TODO: Implement!
+def plot_solving_time_by_carries(mode='save', file_format='pdf'):
+
+    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+
+    for operator in operators:
+
+        plt.figure(figsize=(8,8))
+        plt.grid(axis='y')
+        plt.title('[{operator}] Solving time by carries'.format(operator=operator.capitalize()))
+        plt.ylabel('Solving time (sec.)')
+        plt.xlabel('Carries')
+
+        total_result = get_total_result(operator)
+        mean_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)[operator]
+        carries_list = list(mean_solving_time_by_carries.keys())
+
+        x_labels = ['All']
+        y_boxplot_list = [total_result['solving_time'].get_values()]
+        y_mean = [mean_solving_time_by_operator[operator]]
+
+        for carries in carries_list:
+            total_result_of_carries = filter_carries(total_result, carries)
+            total_result_of_carries = total_result_of_carries['solving_time'].get_values()
+            x_labels.append(str(carries))
+            y_boxplot_list.append(total_result_of_carries)
+            y_mean.append(mean_solving_time_by_carries[carries])
+
+        x = np.arange(0,len(x_labels))
+
+        plt.boxplot(y_boxplot_list,
+                    labels=x_labels,
+                    positions=x
+        )
+        plt.plot(x_labels, y_mean, 'r:o', label='Mean solving time')
+
+        plt.legend()
+
+        if mode == 'show':
+            plt.show()
+        if mode == 'save':
+            create_dir(plot_fig_dir)
+            plot_fig_path = '{plot_dir}/solving_time_by_carries_{operator}.{extension}'.format(
+                plot_dir=plot_fig_dir,
+                operator=operator,
+                extension=file_format
+            )
+            plt.savefig(plot_fig_path)
+        plt.clf()
+
+    pass
+
+
+def plot_mean_solving_time_by_questions(mode='save', file_format='pdf'):
     # for every operator
     for operator in operators:
         # len(df_results) == number_of_experiments
@@ -221,8 +482,8 @@ def plot_mean_solving_time(mode='save', file_format='pdf'):
         y = series_mean_solving_time.get_values()
 
         # Plot setting stage
-        plt.title('Mean solving time')
-        plt.xlabel('Experienced problems')
+        plt.title('Mean solving time by experienced questions')
+        plt.xlabel('Experienced questions')
         plt.ylabel('Mean solving time (sec.)')
 
         # Plot stage
@@ -233,7 +494,7 @@ def plot_mean_solving_time(mode='save', file_format='pdf'):
         plt.show()
     if mode == 'save':
         create_dir(plot_fig_dir)
-        plot_fig_path = '{plot_dir}/mean_solving_time.{extension}'.format(
+        plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_questions.{extension}'.format(
             plot_dir=plot_fig_dir,
             extension=file_format
         )
@@ -241,7 +502,7 @@ def plot_mean_solving_time(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_mean_solving_time_for_each_operator(mode='save', file_format='pdf'):
+def plot_mean_solving_time_by_questions_for_operators(mode='save', file_format='pdf'):
     # for every operator
     for operator in operators:
         # len(df_results) == number_of_experiments
@@ -265,10 +526,10 @@ def plot_mean_solving_time_for_each_operator(mode='save', file_format='pdf'):
         y = series_mean_solving_time.get_values()
 
         # Plot setting stage
-        plt.title('[{operator}] Mean solving time'.format(
+        plt.title('[{operator}] Mean solving time by experienced questions'.format(
             operator=operator.capitalize()
         ))
-        plt.xlabel('Experienced problems')
+        plt.xlabel('Experienced questions')
         plt.ylabel('Mean solving time (sec.)')
 
         # Plot stage
@@ -278,7 +539,7 @@ def plot_mean_solving_time_for_each_operator(mode='save', file_format='pdf'):
             plt.show()
         if mode == 'save':
             create_dir(plot_fig_dir)
-            plot_fig_path = '{plot_dir}/mean_solving_time_{operator}.{extension}'.format(
+            plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_questions_{operator}.{extension}'.format(
                 plot_dir=plot_fig_dir,
                 operator=operator,
                 extension=file_format
@@ -287,7 +548,7 @@ def plot_mean_solving_time_for_each_operator(mode='save', file_format='pdf'):
         plt.clf()
 
 
-def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
+def plot_mean_solving_time_by_questions_for_carries(mode='save', file_format='pdf'):
     # for every operator
     for operator in operators:
         # len(df_results) == number_of_experiments
@@ -320,7 +581,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
             else:
                 carries_label = '{} carries'.format(carries)
 
-            plt.title('[{operator}] Mean solving time by carries'.format(
+            plt.title('[{operator}] Mean solving time by experienced questions for carries'.format(
                 operator=operator.capitalize()
             ))
             plt.xlabel('Experienced problems')
@@ -334,7 +595,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
             plt.show()
         if mode == 'save':
             create_dir(plot_fig_dir)
-            plot_fig_path = '{plot_dir}/mean_solving_time_by_carries_{operator}.{extension}'.format(
+            plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_questions_for_carries_{operator}.{extension}'.format(
                 plot_dir=plot_fig_dir,
                 operator=operator,
                 extension=file_format
@@ -344,6 +605,6 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
 
 def plot_all(mode='save', file_format='pdf'):
-    plot_mean_solving_time(mode=mode, file_format=file_format)
-    plot_mean_solving_time_for_each_operator(mode=mode, file_format=file_format)
-    plot_mean_solving_time_by_carries(mode=mode, file_format=file_format)
+    plot_mean_solving_time_by_questions(mode=mode, file_format=file_format)
+    plot_mean_solving_time_by_questions_for_operators(mode=mode, file_format=file_format)
+    plot_mean_solving_time_by_questions_for_carries(mode=mode, file_format=file_format)
