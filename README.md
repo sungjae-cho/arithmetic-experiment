@@ -44,13 +44,13 @@ Per operation
 
 ## The size of n-carry datasets for each (operator, operand_digits)
 
-Reference this CSV file [carry_dataset_statistics.csv](carry_dataset_statistics.csv).
+Reference this CSV file [carry_dataset_statistics.csv](data/carry_dataset_statistics.csv).
 
 ## The distribution of operations by carries
 
-![carry_dataset_statistics_4-bit_operand](plot_figures/carry_dataset_statistics_4-bit_operand.svg)
-![carry_dataset_statistics_6-bit_operand](plot_figures/carry_dataset_statistics_6-bit_operand.svg)
-![carry_dataset_statistics_8-bit_operand](plot_figures/carry_dataset_statistics_8-bit_operand.svg)
+![carry_dataset_statistics_4-bit_operand](plot_figures/carry_dataset_statistics/carry_dataset_statistics_4-bit_operand.svg)
+![carry_dataset_statistics_6-bit_operand](plot_figures/carry_dataset_statistics/carry_dataset_statistics_6-bit_operand.svg)
+![carry_dataset_statistics_8-bit_operand](plot_figures/carry_dataset_statistics/carry_dataset_statistics_8-bit_operand.svg)
 
 # Access to the carry datasets
 
