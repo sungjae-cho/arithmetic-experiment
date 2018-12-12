@@ -19,11 +19,23 @@ PRACTICE = True
 RESULTS_DIR = PRACTICE_RESULTS_DIR if PRACTICE else ACTUAL_RESULTS_DIR
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
 
+
 class ImBored(Exception):
 
     def __init__(self, results):
         super(ImBored, self).__init__("Thank you for our time ^^")
         self.results = results
+
+
+def _get_input():
+    response = ""
+    try:
+        response = input().strip()
+    except UnicodeDecodeError:
+        print("Make sure that you set your keyboard to English")
+
+    return response
+
 
 def welcome():
     """
@@ -49,13 +61,13 @@ def get_user_data():
         # Make sure age is valid assuming no one is over 100
         while not _valid_birth_year(year):
             print("Please enter your birth year :")
-            year = input().strip()
+            year = _get_input()
         print("Great !!\n")
 
         gender = None
         while not gender:
             print("Are you male or female (M/F) :")
-            g = input().strip()
+            g = _get_input()
             if not g or g[0].upper() not in ["M", "F"]:
                 continue
 
@@ -70,7 +82,7 @@ def get_user_data():
         print("1: Very Bad")
         while not ability:
             print("Please enter ability level here :")
-            ab = input().strip()
+            ab = _get_input()
             if not ab.isdigit() or int(ab) not in [BAD, BAVERAGE, AAVERAGE, GOOD]:
                 continue
 
@@ -78,7 +90,7 @@ def get_user_data():
         print("Fantastic\n")
 
         print("Have you entered all your input correct (Y/N):\t")
-        c = input().strip()
+        c = _get_input()
         info_correct = True if c and c[0].upper() == "Y" else False
 
     # Make sure we have everything we need
@@ -102,7 +114,7 @@ def wait_for_user():
           "'Are you ready for next question (Y/N) ??' question")
     while not ready:
         print("Are you ready (Y/N) ??")
-        r = input().strip()
+        r = _get_input()
         ready = True if r and r[0].upper() == "Y" else False
 
 
@@ -140,7 +152,7 @@ def run_experiment():
                 print("Completed {completed}/{total} questions".format(completed=completed_questions, total=total_nun_questions))
                 print("Completed {percentage}% of quiz".format(percentage=round(completed_questions/float(total_nun_questions) * 100, 2)))
                 print("Are you ready for next question (Y/N) ??")
-                r = input().strip()
+                r = _get_input()
                 ready = evaluate_readiness(r, results=results)
             question_type = random.choice(list(question_set.keys()))
             os.system("clear")
@@ -171,7 +183,7 @@ def ask_question(question_type, operand1, operand2, answer, num_carries, qid):
     valid_answer = False
     while not valid_answer:
         print("Your answer: ")
-        user_answer = input().replace(" ", "")
+        user_answer = _get_input().replace(" ", "")
         valid_answer = _valid_answer(user_answer)
     duration = round(time.time() - start_time, 3)
     correct = validate_answer(answer, user_answer)
