@@ -70,6 +70,27 @@ def get_results(operator):
     return df_results
 
 
+def count_results(operator=None):
+    result_files = get_all_result_files()
+    if operator == None:
+        n_results = len(result_files)
+    else:
+        n_results = 0
+        for f in result_files:
+            if get_operator(f) == operator:
+                n_results = n_results + 1
+
+    return n_results
+
+
+def print_count_results():
+    print("Total results: {}".format(count_results()))
+    for operator in operators:
+        print("{} results: {}".format(
+            operator.capitalize(),
+            count_results(operator)))
+
+
 def get_total_result(operator=None):
     '''
     Get all results in one DataFrame.
