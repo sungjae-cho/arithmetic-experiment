@@ -17,7 +17,7 @@ results_dir = 'user_data/results'
 operators = ['add', 'subtract', 'multiply', 'divide', 'modulo']
 columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
     'operand_digits', 'operator', 'carries']
-questions_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
+problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
 
 
 def create_dir(directory):
@@ -479,7 +479,7 @@ def plot_solving_time_by_carries(mode='save', file_format='pdf'):
     pass
 
 
-def plot_mean_solving_time_by_questions(mode='save', file_format='pdf'):
+def plot_mean_solving_time_by_problems(mode='save', file_format='pdf'):
     # for every operator
     for operator in operators:
         # len(df_results) == number_of_experiments
@@ -503,8 +503,8 @@ def plot_mean_solving_time_by_questions(mode='save', file_format='pdf'):
         y = series_mean_solving_time.get_values()
 
         # Plot setting stage
-        plt.title('Mean solving time by experienced questions')
-        plt.xlabel('Experienced questions')
+        plt.title('Mean solving time by experienced problems')
+        plt.xlabel('Experienced problems')
         plt.ylabel('Mean solving time (sec.)')
 
         # Plot stage
@@ -515,7 +515,7 @@ def plot_mean_solving_time_by_questions(mode='save', file_format='pdf'):
         plt.show()
     if mode == 'save':
         create_dir(plot_fig_dir)
-        plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_questions.{extension}'.format(
+        plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_problems.{extension}'.format(
             plot_dir=plot_fig_dir,
             extension=file_format
         )
@@ -523,7 +523,7 @@ def plot_mean_solving_time_by_questions(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_mean_solving_time_by_questions_for_operators(mode='save', file_format='pdf'):
+def plot_mean_solving_time_by_problems_for_operators(mode='save', file_format='pdf'):
     # for every operator
     for operator in operators:
         # len(df_results) == number_of_experiments
@@ -547,10 +547,10 @@ def plot_mean_solving_time_by_questions_for_operators(mode='save', file_format='
         y = series_mean_solving_time.get_values()
 
         # Plot setting stage
-        plt.title('[{operator}] Mean solving time by experienced questions'.format(
+        plt.title('[{operator}] Mean solving time by experienced problems'.format(
             operator=operator.capitalize()
         ))
-        plt.xlabel('Experienced questions')
+        plt.xlabel('Experienced problems')
         plt.ylabel('Mean solving time (sec.)')
 
         # Plot stage
@@ -560,7 +560,7 @@ def plot_mean_solving_time_by_questions_for_operators(mode='save', file_format='
             plt.show()
         if mode == 'save':
             create_dir(plot_fig_dir)
-            plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_questions_{operator}.{extension}'.format(
+            plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_problems_{operator}.{extension}'.format(
                 plot_dir=plot_fig_dir,
                 operator=operator,
                 extension=file_format
@@ -569,7 +569,7 @@ def plot_mean_solving_time_by_questions_for_operators(mode='save', file_format='
         plt.clf()
 
 
-def plot_mean_solving_time_by_questions_for_carries(mode='save', file_format='pdf'):
+def plot_mean_solving_time_by_problems_for_carries(mode='save', file_format='pdf'):
     # for every operator
     for operator in operators:
         # len(df_results) == number_of_experiments
@@ -602,7 +602,7 @@ def plot_mean_solving_time_by_questions_for_carries(mode='save', file_format='pd
             else:
                 carries_label = '{} carries'.format(carries)
 
-            plt.title('[{operator}] Mean solving time by experienced questions for carries'.format(
+            plt.title('[{operator}] Mean solving time by experienced problems for carries'.format(
                 operator=operator.capitalize()
             ))
             plt.xlabel('Experienced problems')
@@ -616,7 +616,7 @@ def plot_mean_solving_time_by_questions_for_carries(mode='save', file_format='pd
             plt.show()
         if mode == 'save':
             create_dir(plot_fig_dir)
-            plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_questions_for_carries_{operator}.{extension}'.format(
+            plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_problems_for_carries_{operator}.{extension}'.format(
                 plot_dir=plot_fig_dir,
                 operator=operator,
                 extension=file_format
@@ -626,6 +626,6 @@ def plot_mean_solving_time_by_questions_for_carries(mode='save', file_format='pd
 
 
 def plot_all(mode='save', file_format='pdf'):
-    plot_mean_solving_time_by_questions(mode=mode, file_format=file_format)
-    plot_mean_solving_time_by_questions_for_operators(mode=mode, file_format=file_format)
-    plot_mean_solving_time_by_questions_for_carries(mode=mode, file_format=file_format)
+    plot_mean_solving_time_by_problems(mode=mode, file_format=file_format)
+    plot_mean_solving_time_by_problems_for_operators(mode=mode, file_format=file_format)
+    plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
