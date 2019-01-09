@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import data_utils
 from os import listdir
 from os.path import isfile, join
 from pprint import pprint
@@ -14,6 +15,8 @@ from pprint import pprint
 
 plot_fig_dir = 'plot_figures/results'
 results_dir = 'user_data/results'
+dir_st = 'user_data/results_csv/solving_time'
+dir_st_correct = 'user_data/results_csv/solving_time_correct'
 operators = ['add', 'subtract', 'multiply', 'divide', 'modulo']
 columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
     'operand_digits', 'operator', 'carries']
@@ -636,3 +639,20 @@ def plot_all(mode='save', file_format='pdf'):
     plot_mean_solving_time_by_problems(mode=mode, file_format=file_format)
     plot_mean_solving_time_by_problems_for_operators(mode=mode, file_format=file_format)
     plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
+
+
+def save_csv_files():
+    '''
+    Create CSV files for ANOVA.
+    '''
+    df = get_total_result()
+    create_dir(dir_st)
+    create_dir(dir_st_correct)
+    df[['solving_time', 'operator']].to_csv('{}/operators.csv'.format(dir_st), index=False)
+    df_correct = filter_correct(df, True)
+    df_correct[['solving_time', 'operator']].to_csv('{}/operators.csv'.format(dir_st_correct), index=False)
+
+    for operator in data_utils.operators_list:
+        df_op = filter_operator(df, operator)
+        df_op[['solving_time', 'carries']].to_csv('{}/carries_{}.csv'.format(dir_st, operator), index=False)
+        df_op[['solving_time', 'carries']].to_csv('{}/carries_{}.csv'.format(dir_st_correct, operator), index=False)
