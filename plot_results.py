@@ -32,6 +32,13 @@ def filter_carries(df_result, carries):
     return df_result[cond_carries]
 
 
+def filter_correct(df_result, correctness):
+    # Condition of the given operators
+    cond_operator = (df_result['correct'] == correctness)
+
+    return df_result[cond_operator]
+
+
 def filter_operator(df_result, operator):
     # Condition of the given operators
     cond_operator = (df_result['operator'] == operator)
