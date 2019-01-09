@@ -13,8 +13,8 @@ from os.path import isfile, join
 from pprint import pprint
 
 
-plot_fig_dir = 'plot_figures/results'
-results_dir = 'user_data/results'
+dir_plot_fig = 'plot_figures/results'
+dir_results = 'user_data/results'
 dir_st = 'user_data/results_csv/solving_time'
 dir_st_correct = 'user_data/results_csv/solving_time_correct'
 operators = ['add', 'subtract', 'multiply', 'divide', 'modulo']
@@ -57,9 +57,9 @@ def get_unique_carries(df_result):
 
 def get_all_result_files():
     result_files = list()
-    list_dir = listdir(results_dir)
+    list_dir = listdir(dir_results)
     for f in list_dir:
-        file_path = join(results_dir, f)
+        file_path = join(dir_results, f)
         if isfile(file_path) and f != '_.txt':
             result_files.append(file_path)
 
@@ -216,9 +216,9 @@ def plot_solving_time_for_carries(df_result, subject_index, mode='save', file_fo
     if mode == 'show':
         plt.show()
     if mode == 'save':
-        create_dir(plot_fig_dir)
+        create_dir(dir_plot_fig)
         plot_fig_path = '{plot_dir}/{operator}_subject-{sub_index}_by_carries.{extension}'.format(
-            plot_dir=plot_fig_dir,
+            plot_dir=dir_plot_fig,
             operator=operator,
             sub_index=subject_index,
             carries=carries,
@@ -255,9 +255,9 @@ def plot_accuracy_by_operator(mode='save', file_format='pdf'):
     if mode == 'show':
         plt.show()
     if mode == 'save':
-        create_dir(plot_fig_dir)
+        create_dir(dir_plot_fig)
         plot_fig_path = '{plot_dir}/accuracy_by_operator.{extension}'.format(
-            plot_dir=plot_fig_dir,
+            plot_dir=dir_plot_fig,
             extension=file_format
         )
         plt.savefig(plot_fig_path)
@@ -291,9 +291,9 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(plot_fig_dir)
+            create_dir(dir_plot_fig)
             plot_fig_path = '{plot_dir}/accuracy_by_carries_{operator}.{extension}'.format(
-                plot_dir=plot_fig_dir,
+                plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
             )
@@ -329,9 +329,9 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     if mode == 'show':
         plt.show()
     if mode == 'save':
-        create_dir(plot_fig_dir)
+        create_dir(dir_plot_fig)
         plot_fig_path = '{plot_dir}/mean_solving_time_by_operator.{extension}'.format(
-            plot_dir=plot_fig_dir,
+            plot_dir=dir_plot_fig,
             extension=file_format
         )
         plt.savefig(plot_fig_path)
@@ -365,9 +365,9 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(plot_fig_dir)
+            create_dir(dir_plot_fig)
             plot_fig_path = '{plot_dir}/mean_solving_time_by_carries_{operator}.{extension}'.format(
-                plot_dir=plot_fig_dir,
+                plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
             )
@@ -427,9 +427,9 @@ def plot_solving_time_by_operator(mode='save', file_format='pdf'):
     if mode == 'show':
         plt.show()
     if mode == 'save':
-        create_dir(plot_fig_dir)
+        create_dir(dir_plot_fig)
         plot_fig_path = '{plot_dir}/solving_time_by_operator.{extension}'.format(
-            plot_dir=plot_fig_dir,
+            plot_dir=dir_plot_fig,
             extension=file_format
         )
         plt.savefig(plot_fig_path)
@@ -477,9 +477,9 @@ def plot_solving_time_by_carries(mode='save', file_format='pdf'):
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(plot_fig_dir)
+            create_dir(dir_plot_fig)
             plot_fig_path = '{plot_dir}/solving_time_by_carries_{operator}.{extension}'.format(
-                plot_dir=plot_fig_dir,
+                plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
             )
@@ -524,9 +524,9 @@ def plot_mean_solving_time_by_problems(mode='save', file_format='pdf'):
     if mode == 'show':
         plt.show()
     if mode == 'save':
-        create_dir(plot_fig_dir)
+        create_dir(dir_plot_fig)
         plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_problems.{extension}'.format(
-            plot_dir=plot_fig_dir,
+            plot_dir=dir_plot_fig,
             extension=file_format
         )
         plt.savefig(plot_fig_path)
@@ -569,9 +569,9 @@ def plot_mean_solving_time_by_problems_for_operators(mode='save', file_format='p
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(plot_fig_dir)
+            create_dir(dir_plot_fig)
             plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_problems_{operator}.{extension}'.format(
-                plot_dir=plot_fig_dir,
+                plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
             )
@@ -625,9 +625,9 @@ def plot_mean_solving_time_by_problems_for_carries(mode='save', file_format='pdf
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(plot_fig_dir)
+            create_dir(dir_plot_fig)
             plot_fig_path = '{plot_dir}/mean_solving_time_by_experienced_problems_for_carries_{operator}.{extension}'.format(
-                plot_dir=plot_fig_dir,
+                plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
             )
