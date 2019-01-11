@@ -161,9 +161,12 @@ def get_mean_solving_time(groupby_operator=False, groupby_carries=False):
     return mean_solving_time
 
 
-def read_result_file(file_path):
+def read_result_file(file_path, solving_time_normalized=True):
     df_results = pd.read_csv(file_path, sep='\t', header=None,
         names=columns)
+
+    if solving_time_normalized:
+        df_results[['solving_time']] = df_results[['solving_time']] * np.std(df_results[['solving_time']])
 
     return df_results
 
