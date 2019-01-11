@@ -161,12 +161,16 @@ def get_mean_solving_time(groupby_operator=False, groupby_carries=False):
     return mean_solving_time
 
 
-def read_result_file(file_path, solving_time_normalized=True):
+def read_result_file(file_path, solving_time_normalized=True,
+                    correctness=True):
     df_results = pd.read_csv(file_path, sep='\t', header=None,
         names=columns)
 
     if solving_time_normalized:
         df_results[['solving_time']] = df_results[['solving_time']] * np.std(df_results[['solving_time']])
+
+    if correctness:
+        filter_correct(df_results, True)
 
     return df_results
 
@@ -318,7 +322,8 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         mean_solving_time_by_operator['modulo']
     )
 
-    plt.ylim(0.0, 60.0)
+    #plt.ylim(0.0, 60.0)
+    #plt.ylim(0.0, 100.0)
     #plt.yticks(np.arange(0, 1.1, step=0.1))
     plt.grid(axis='y')
     plt.ylabel('Mean solving time (sec.)')
@@ -352,7 +357,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         x = [str(carries) for carries in carries_list]
         y = list(mean_solving_time_by_carries[operator].get_values())
 
-        plt.ylim(0.0, 60.0)
+        #plt.ylim(0.0, 60.0)
         #plt.yticks(np.arange(0, 1.1, step=0.1))
         plt.grid(axis='y')
         plt.ylabel('Mean solving time (sec.)')
@@ -405,9 +410,9 @@ def plot_solving_time_by_operator(mode='save', file_format='pdf'):
 
     plt.figure(figsize=(8,8))
 
-    max_ylim = int(np.ceil(max_solving_time / 10) * 10)
-    plt.ylim(0.0, max_ylim)
-    plt.yticks([0, 10, 20, 30, 40, 50] + list(range(60,max_ylim,30)))
+    #max_ylim = int(np.ceil(max_solving_time / 10) * 10)
+    #plt.ylim(0.0, max_ylim)
+    #plt.yticks([0, 10, 20, 30, 40, 50] + list(range(60,max_ylim,30)))
 
     plt.grid(axis='y')
     plt.title('Solving time by operator')
