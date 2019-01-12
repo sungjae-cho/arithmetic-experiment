@@ -1,29 +1,54 @@
 # Arithmetic experiment
 To make a program that can do the psychology experiment of arithmetic cognition on human subjects
 
-# Subject information
-1. Subject ID : `int` : Primary key
-1. Name : `str`
-1. Age : `int`
+## Program dependency
+1. Python 3.xx
+1. Numpy
+1. Pandas
+1. Matplotlib
+
+# 1. User data
+
+Our user data saved in the directory `user_data`. In `user_data/results`, each file contains experiment data from a participant.
+
+## 1.1. Participant information
+1. Birth year (Age) : `int`
 1. Gender = `{'male', 'female'}`
-1. Math ability = `{'good', 'okay', 'bad'}`
+1. Math ability (answered by a participant) = `{1:'very bad', 2:'below average', 3:'above average', 4:'very good'}`
 
-# Experiment record
-Per operation
-* operation_experiment_id [experiment_id] : Primary key
-* subject_id
-* operator
-* operand1
-* operand2
-* true_operation_result
-* subject_operation_result
-* solving time [reaction time, processing time]
-* correctness
+The name of the file means the datetime the experiment taken, birth year, gender(1: male, 2: female), and mathematical ability(1-4). For example, `2018-12-06_04_26_02_1999_1_3.result` stands for "This experiment was taken at 04:26:02, Dec. 06, 2018 by a male born in 1999 who had 3-level, above average, mathematical ability."
 
+## 1.2. Experiment data
 
-# Data descriptions
-## The size of total operations
+In the file, its data are organized like below:
 
+| Carry dataset index | Corret | Solving time (sec.) | Answer  | True ansewer | Operand digits | Operator | Carries |
+|---------------------|--------|---------------------|---------|--------------|----------------|----------|---------|
+| 7                   | True   | 21.242              | 1001110 | 01001110     | 4              | multiply | 2       |
+
+Each row is separated by `'\n'`, and in each row, each column record is separated by `'\t'`. In the actual file, there is no header row.
+
+Carry data index refers to the index with which the operation can be retrieved. For example, we can retrieve the operation like below:
+```Python
+from data_utils import *
+operand_digits = 4 # operand_digits in [4, 6, 8]
+operator = 'multiply' # operator in ['add', 'substract', 'multiply', 'divide', 'modulo']
+carries = 2
+index = 7
+carry_datasets = import_carry_datasets(operand_digits, operator)
+op_operands = carry_datasets[carries]['input'][index] # concatenated operands
+op_result = carry_datasets[carries]['input'][index]
+print(op_operands)
+print(op_result)
+```
+
+# 2. Operation data
+
+For subtraction, we only deal with the case that `operand1 >= operand2` if `operand1 - operand2`. For division and modulo,  we only deal with the case that `operand2 != 0` if `operand1 / operand2` or `operand1 % operand2`.
+
+The number of total operations  
+
+## 2.1. Operation datasets
 | Operator | Operand digits | Input dim | Output dim | Total operations |
 |----------|----------------|-----------|------------|------------------|
 | add      | 4              | 8         | 5          | 256              |
@@ -42,55 +67,53 @@ Per operation
 | modulo   | 6              | 12        | 6          | 4032             |
 | modulo   | 8              | 16        | 8          | 65280            |
 
-## The size of n-carry datasets for each (operator, operand_digits)
+## 2.2. Carry datasets
+
+### The size of n-carry datasets for each (operator, operand_digits)
 
 Reference this CSV file [carry_dataset_statistics.csv](data/carry_dataset_statistics.csv).
 
-## The distribution of operations by carries
+### The distribution of operations by carries
 
 ![carry_dataset_statistics_4-bit_operand](plot_figures/carry_dataset_statistics/carry_dataset_statistics_4-digit_operand.png)
 ![carry_dataset_statistics_6-bit_operand](plot_figures/carry_dataset_statistics/carry_dataset_statistics_6-digit_operand.png)
 ![carry_dataset_statistics_8-bit_operand](plot_figures/carry_dataset_statistics/carry_dataset_statistics_8-digit_operand.png)
 
-# Access to the carry datasets
+## 2.3. Access to the carry datasets
 
-## Program dependency
-1. Python 3.xx
-1. Numpy
-
-## Import data structure
+### Import data structure
 ```Python
 from data_utils import *
 operand_digits = 4 # operand_digits in [4, 6, 8]
 operator = 'add' # operator in ['add', 'substract', 'multiply', 'divide', 'modulo']
-carry_dataset = import_carry_datasets(operand_digits, operator)
+carry_datasets = import_carry_datasets(operand_digits, operator)
 ```
 
-## How to access the data of `carry_dataset`
+### How to access the data of `carry_datasets`
 How see what kinds of carries exist in the dataset.
 ```Python
-carry_dataset.keys()
+carry_datasets.keys()
 ```
 
 How to access the 2-carry dataset
 ```Python
-carry_dataset[2]
+carry_datasets[2]
 ```
 
 How to access the input the 2-carry dataset
 ```Python
-carry_dataset[2]['input']
+carry_datasets[2]['input']
 ```
-`carry_dataset[2]['input'].shape == (n_operations, 2 * operand_digits)`
+`carry_datasets[2]['input'].shape == (n_operations, 2 * operand_digits)`
 
 How to access the input the 2-carry dataset
 ```Python
-carry_dataset[2]['output']
+carry_datasets[2]['output']
 ```
-`carry_dataset[2]['output'].shape == (n_operations, operand_digits)`
+`carry_datasets[2]['output'].shape == (n_operations, operand_digits)`
 
 How to access the i-th operation in the 2-carry dataset
 ```Python
-carry_dataset[2]['input'][i,:]
-carry_dataset[2]['output'][i,:]
+carry_datasets[2]['input'][i,:]
+carry_datasets[2]['output'][i,:]
 ```
