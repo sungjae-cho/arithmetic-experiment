@@ -23,7 +23,7 @@ columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
 problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
 solving_time_normalized = False
 correctness = True
-errorbar_std = 0.5
+errorbar_std = 0.25
 
 
 def create_dir(directory):
@@ -323,19 +323,19 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
     mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
 
-    x = ('Add', 'Subtract', 'Multiply', 'Divide', 'Modulo')
-    y = (mean_solving_time_by_operator['add'],
+    x = ['Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
+    y = [mean_solving_time_by_operator['add'],
         mean_solving_time_by_operator['subtract'],
         mean_solving_time_by_operator['multiply'],
         mean_solving_time_by_operator['divide'],
         mean_solving_time_by_operator['modulo']
-    )
-    e = (std_solving_time_by_operator['add'],
-        std_solving_time_by_operator['subtract'],
-        std_solving_time_by_operator['multiply'],
-        std_solving_time_by_operator['divide'],
-        std_solving_time_by_operator['modulo']
-    ) * errorbar_std
+    ]
+    e = [errorbar_std * std_solving_time_by_operator['add'],
+        errorbar_std * std_solving_time_by_operator['subtract'],
+        errorbar_std * std_solving_time_by_operator['multiply'],
+        errorbar_std * std_solving_time_by_operator['divide'],
+        errorbar_std * std_solving_time_by_operator['modulo']
+    ]
 
     #plt.ylim(0.0, 60.0)
     #plt.ylim(0.0, 100.0)
@@ -373,7 +373,9 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         carries_list = list(mean_solving_time_by_carries[operator].keys())
         x = [str(carries) for carries in carries_list]
         y = list(mean_solving_time_by_carries[operator].get_values())
-        e = list(std_solving_time_by_carries[operator].get_values()) * errorbar_std
+        e = list(std_solving_time_by_carries[operator].get_values())
+        for i in range(len(e)):
+            e[i] = errorbar_std * e[i]
 
         #plt.ylim(0.0, 60.0)
         #plt.yticks(np.arange(0, 1.1, step=0.1))
