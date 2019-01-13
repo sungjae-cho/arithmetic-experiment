@@ -344,7 +344,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     plt.title('Mean solving time by operator')
 
     #plt.plot(x, y, ':o', label='Each operator')
-    plt.errorbar(x, y, e, fmt=':o', marker='^')
+    plt.errorbar(x, y, e, fmt=':o', ecolor='orange', capsize=3)
 
     #plt.bar(x, y, align='center')
     plt.hlines(total_mean_solving_time, xmin=-0.5, xmax=len(x)-0.5, colors='r', label='All operators')
