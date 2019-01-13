@@ -372,6 +372,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         carries_list = list(mean_solving_time_by_carries[operator].keys())
         x = [str(carries) for carries in carries_list]
         y = list(mean_solving_time_by_carries[operator].get_values())
+        e = list(std_solving_time_by_carries[operator].get_values())
 
         #plt.ylim(0.0, 60.0)
         #plt.yticks(np.arange(0, 1.1, step=0.1))
@@ -380,7 +381,8 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
 
         #plt.bar(x, y, align='center')
-        plt.plot(x, y, ':o', label='Carry datasets')
+        #plt.plot(x, y, ':o', label='Carry datasets')
+        plt.errorbar(x, y, e, fmt=':o', ecolor='orange', capsize=3)
         plt.hlines(mean_solving_time_by_operator[operator],
             xmin=-0.5, xmax=len(x)-0.5, colors='r',
             label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
