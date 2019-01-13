@@ -151,14 +151,17 @@ def get_mean_solving_time(groupby_operator=False, groupby_carries=False):
 
     if (groupby_operator == False) and (groupby_carries == False):
         mean_solving_time = total_result['solving_time'].mean()
+        std_solving_time = total_result['solving_time'].std()
 
     if (groupby_operator == True) and (groupby_carries == False):
         mean_solving_time = total_result.groupby(['operator'])['solving_time'].mean()
+        std_solving_time = total_result.groupby(['operator'])['solving_time'].std()
 
     if (groupby_operator == True) and (groupby_carries == True):
         mean_solving_time = total_result.groupby(['operator', 'carries'])['solving_time'].mean()
+        std_solving_time = total_result.groupby(['operator', 'carries'])['solving_time'].std()
 
-    return mean_solving_time
+    return mean_solving_time, std_solving_time
 
 
 def read_result_file(file_path, solving_time_normalized=True,
@@ -311,8 +314,8 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
 # TODO: Implement!
 def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
-    total_mean_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
-    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+    total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
+    mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
 
     x = ('Add', 'Subtract', 'Multiply', 'Divide', 'Modulo')
     y = (mean_solving_time_by_operator['add'],
@@ -320,6 +323,12 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         mean_solving_time_by_operator['multiply'],
         mean_solving_time_by_operator['divide'],
         mean_solving_time_by_operator['modulo']
+    )
+    e = (std_solving_time_by_operator['add'],
+        std_solving_time_by_operator['subtract'],
+        std_solving_time_by_operator['multiply'],
+        std_solving_time_by_operator['divide'],
+        std_solving_time_by_operator['modulo']
     )
 
     #plt.ylim(0.0, 60.0)
@@ -329,7 +338,9 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     plt.ylabel('Mean solving time (sec.)')
     plt.title('Mean solving time by operator')
 
-    plt.plot(x, y, ':o', label='Each operator')
+    #plt.plot(x, y, ':o', label='Each operator')
+    plt.errorbar(x, y, e, fmt=':o', marker='^')
+
     #plt.bar(x, y, align='center')
     plt.hlines(total_mean_solving_time, xmin=-0.5, xmax=len(x)-0.5, colors='r', label='All operators')
     plt.legend()
@@ -348,8 +359,8 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
 def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
-    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
-    mean_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)
+    mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+    mean_solving_time_by_carries, std_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)
 
     for operator in operators:
 
@@ -385,8 +396,8 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
 def plot_solving_time_by_operator(mode='save', file_format='pdf'):
 
-    total_mean_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
-    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+    total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
+    mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
 
     total_result = get_total_result()['solving_time'].get_values()
     total_result_add = get_total_result('add')['solving_time'].get_values()
@@ -447,7 +458,7 @@ def plot_solving_time_by_operator(mode='save', file_format='pdf'):
 # TODO: Implement!
 def plot_solving_time_by_carries(mode='save', file_format='pdf'):
 
-    mean_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+    mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
 
     for operator in operators:
 
@@ -458,7 +469,7 @@ def plot_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.xlabel('Carries')
 
         total_result = get_total_result(operator)
-        mean_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)[operator]
+        mean_solving_time_by_carries, std_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)[operator]
         carries_list = list(mean_solving_time_by_carries.keys())
 
         x_labels = ['All']
