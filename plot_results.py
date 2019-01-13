@@ -23,6 +23,7 @@ columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
 problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
 solving_time_normalized = False
 correctness = True
+errorbar_std = 0.5
 
 
 def create_dir(directory):
@@ -334,7 +335,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         std_solving_time_by_operator['multiply'],
         std_solving_time_by_operator['divide'],
         std_solving_time_by_operator['modulo']
-    )
+    ) * errorbar_std
 
     #plt.ylim(0.0, 60.0)
     #plt.ylim(0.0, 100.0)
@@ -372,7 +373,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         carries_list = list(mean_solving_time_by_carries[operator].keys())
         x = [str(carries) for carries in carries_list]
         y = list(mean_solving_time_by_carries[operator].get_values())
-        e = list(std_solving_time_by_carries[operator].get_values())
+        e = list(std_solving_time_by_carries[operator].get_values()) * errorbar_std
 
         #plt.ylim(0.0, 60.0)
         #plt.yticks(np.arange(0, 1.1, step=0.1))
