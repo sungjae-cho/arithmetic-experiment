@@ -21,6 +21,8 @@ operators = ['add', 'subtract', 'multiply', 'divide', 'modulo']
 columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
     'operand_digits', 'operator', 'carries']
 problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
+solving_time_normalized = False
+correctness = True
 
 
 def create_dir(directory):
@@ -74,7 +76,10 @@ def get_results(operator):
     result_files = get_all_result_files()
     for f in result_files:
         if get_operator(f) == operator:
-            df_result = read_result_file(f)
+            df_result = read_result_file(f,
+                            solving_time_normalized,
+                            correctness)
+
             df_results.append(df_result)
 
     return df_results
