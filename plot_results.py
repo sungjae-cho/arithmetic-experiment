@@ -493,7 +493,8 @@ def plot_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.xlabel('Carries')
 
         total_result = get_total_result(operator)
-        mean_solving_time_by_carries, std_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)[operator]
+        mean_solving_time_by_carries, std_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)
+        mean_solving_time_by_carries = mean_solving_time_by_carries[operator]
         carries_list = list(mean_solving_time_by_carries.keys())
 
         x_labels = ['All']
