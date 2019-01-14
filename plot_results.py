@@ -23,7 +23,7 @@ columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
 problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
 solving_time_normalized = False
 correctness = True
-errorbar_std = 0.25
+errorbar_std = 1
 
 
 def create_dir(directory):
