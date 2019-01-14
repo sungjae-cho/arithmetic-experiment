@@ -353,11 +353,11 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     #plt.title('Mean solving time by operator')
 
     #plt.plot(x, y, ':o', label='Each operator')
-    plt.errorbar(x, y, e, fmt=':o', ecolor='orange', capsize=3)
+    plt.errorbar(x, y, e, fmt='r:o', ecolor='orange', capsize=3)
 
     #plt.bar(x, y, align='center')
-    plt.hlines(total_mean_solving_time, xmin=-0.5, xmax=len(x)-0.5, colors='r', label='All operators')
-    plt.legend()
+    '''plt.hlines(total_mean_solving_time, xmin=-0.5, xmax=len(x)-0.5, colors='g', label='All operators')
+    plt.legend()'''
 
     if mode == 'show':
         plt.show()
@@ -399,11 +399,11 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
         #plt.bar(x, y, align='center')
         #plt.plot(x, y, ':o', label='Carry datasets')
-        plt.errorbar(x, y, e, fmt=':o', ecolor='orange', capsize=3)
-        plt.hlines(mean_solving_time_by_operator[operator],
-            xmin=-0.5, xmax=len(x)-0.5, colors='r',
+        plt.errorbar(x, y, e, fmt='r:o', ecolor='orange', capsize=3)
+        '''plt.hlines(mean_solving_time_by_operator[operator],
+            xmin=-0.5, xmax=len(x)-0.5, colors='g',
             label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
-        plt.legend()
+        plt.legend()'''
 
         if mode == 'show':
             plt.show()
