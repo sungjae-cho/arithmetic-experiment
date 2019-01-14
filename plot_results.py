@@ -241,7 +241,7 @@ def plot_solving_time_for_carries(df_result, subject_index, mode='save', file_fo
             carries=carries,
             extension=file_format
         )
-        plt.savefig(plot_fig_path)
+        plt.savefig(plot_fig_path, bbox_inches='tight')
     plt.clf()
 
 
@@ -277,7 +277,7 @@ def plot_accuracy_by_operator(mode='save', file_format='pdf'):
             plot_dir=dir_plot_fig,
             extension=file_format
         )
-        plt.savefig(plot_fig_path)
+        plt.savefig(plot_fig_path, bbox_inches='tight')
     plt.clf()
 
 
@@ -314,7 +314,7 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
                 operator=operator,
                 extension=file_format
             )
-            plt.savefig(plot_fig_path)
+            plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
 
 
@@ -367,7 +367,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
             plot_dir=dir_plot_fig,
             extension=file_format
         )
-        plt.savefig(plot_fig_path)
+        plt.savefig(plot_fig_path, bbox_inches='tight')
     plt.clf()
 
 
@@ -414,7 +414,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
                 operator=operator,
                 extension=file_format
             )
-            plt.savefig(plot_fig_path)
+            plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
 
 
@@ -475,7 +475,7 @@ def plot_solving_time_by_operator(mode='save', file_format='pdf'):
             plot_dir=dir_plot_fig,
             extension=file_format
         )
-        plt.savefig(plot_fig_path)
+        plt.savefig(plot_fig_path, bbox_inches='tight')
     plt.clf()
 
 
@@ -527,7 +527,7 @@ def plot_solving_time_by_carries(mode='save', file_format='pdf'):
                 operator=operator,
                 extension=file_format
             )
-            plt.savefig(plot_fig_path)
+            plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
 
     pass
@@ -573,7 +573,7 @@ def plot_mean_solving_time_by_problems(mode='save', file_format='pdf'):
             plot_dir=dir_plot_fig,
             extension=file_format
         )
-        plt.savefig(plot_fig_path)
+        plt.savefig(plot_fig_path, bbox_inches='tight')
     plt.clf()
 
 
@@ -619,7 +619,7 @@ def plot_mean_solving_time_by_problems_for_operators(mode='save', file_format='p
                 operator=operator,
                 extension=file_format
             )
-            plt.savefig(plot_fig_path)
+            plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
 
 
@@ -675,7 +675,7 @@ def plot_mean_solving_time_by_problems_for_carries(mode='save', file_format='pdf
                 operator=operator,
                 extension=file_format
             )
-            plt.savefig(plot_fig_path)
+            plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
 
 
