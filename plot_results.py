@@ -24,7 +24,7 @@ problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'mo
 solving_time_normalized = False
 correctness = True
 errorbar_std = 1
-font_size = {'xlabel':20, 'ylabel':15, 'xtick':20, 'ytick':10}
+font_size = {'xlabel':20, 'ylabel':17, 'xtick':20, 'ytick':10}
 
 
 def create_dir(directory):
