@@ -24,6 +24,7 @@ problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'mo
 solving_time_normalized = False
 correctness = True
 errorbar_std = 1
+font_size = {'xlabel':20, 'ylabel':15, 'xtick':20, 'ytick':10}
 
 
 def create_dir(directory):
@@ -323,7 +324,8 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
     mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
 
-    x = ['Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
+    #x = ['Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
+    x = ['+', '−', '×', '÷', 'mod']
     y = [mean_solving_time_by_operator['add'],
         mean_solving_time_by_operator['subtract'],
         mean_solving_time_by_operator['multiply'],
@@ -337,12 +339,18 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         errorbar_std * std_solving_time_by_operator['modulo']
     ]
 
+    plt.figure(figsize=(len(x)-1,4))
+    #plt.xlabel('Operator')
+    plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+    plt.tick_params(axis='x', labelsize=font_size['xtick'])
+    plt.tick_params(axis='y', labelsize=font_size['ytick'])
+
     #plt.ylim(0.0, 60.0)
     #plt.ylim(0.0, 100.0)
     #plt.yticks(np.arange(0, 1.1, step=0.1))
     plt.grid(axis='y')
     plt.ylabel('Mean solving time (sec.)')
-    plt.title('Mean solving time by operator')
+    #plt.title('Mean solving time by operator')
 
     #plt.plot(x, y, ':o', label='Each operator')
     plt.errorbar(x, y, e, fmt=':o', ecolor='orange', capsize=3)
@@ -377,11 +385,17 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         for i in range(len(e)):
             e[i] = errorbar_std * e[i]
 
+        plt.figure(figsize=(len(x)-1,4))
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+        plt.tick_params(axis='x', labelsize=font_size['xtick'])
+        plt.tick_params(axis='y', labelsize=font_size['ytick'])
+
         #plt.ylim(0.0, 60.0)
         #plt.yticks(np.arange(0, 1.1, step=0.1))
         plt.grid(axis='y')
         plt.ylabel('Mean solving time (sec.)')
-        plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
+        #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
 
         #plt.bar(x, y, align='center')
         #plt.plot(x, y, ':o', label='Carry datasets')
