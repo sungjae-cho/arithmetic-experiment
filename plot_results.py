@@ -22,7 +22,7 @@ columns = ['data_index', 'correct', 'solving_time', 'answer', 'truth',
     'operand_digits', 'operator', 'carries']
 problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'modulo':10}
 solving_time_normalized = False
-correctness = True
+solving_time_correctness = True
 errorbar_std = 1
 font_size = {'xlabel':20, 'ylabel':17, 'xtick':20, 'ytick':10}
 
@@ -51,6 +51,16 @@ def filter_operator(df_result, operator):
     cond_operator = (df_result['operator'] == operator)
 
     return df_result[cond_operator]
+
+
+def filter_for_mean_solving_time(df_result):
+    if solving_time_normalized:
+        df_result = normalize_solving_time(df_result)
+
+    if solving_time_correctness:
+        df_result = filter_correct(df_result, True)
+        
+    return df_result
 
 
 def normalize_solving_time(df_result):
