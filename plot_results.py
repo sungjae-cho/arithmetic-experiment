@@ -65,6 +65,7 @@ def filter_for_mean_solving_time(df_result):
 
 def normalize_solving_time(df_result):
     df_result[['solving_time']] = df_result[['solving_time']] * np.std(df_result[['solving_time']])
+
     return df_result
 
 
@@ -100,6 +101,9 @@ def get_results(operator):
 
 
 def count_results(operator=None):
+    ''''
+    Count how many result files for a particular operator or all operators.
+    '''
     result_files = get_all_result_files()
     if operator == None:
         n_results = len(result_files)
@@ -113,6 +117,9 @@ def count_results(operator=None):
 
 
 def print_count_results():
+    '''
+    Print how many result files for all operators and each operator.
+    '''
     print("Total results: {}".format(count_results()))
     for operator in operators:
         print("{} results: {}".format(
@@ -124,7 +131,6 @@ def get_total_result(operator=None):
     '''
     Get all results in one DataFrame.
     '''
-
     if operator == None:
         # Import results of all operators
         df_results = list()
@@ -143,6 +149,9 @@ def get_total_result(operator=None):
 
 
 def get_operator(file_path):
+    '''
+    Return a string of an operator where a particular result file used.
+    '''
     with open(file_path, 'r') as f:
         first_line = f.readline()
     operator_index = 6
@@ -152,6 +161,9 @@ def get_operator(file_path):
 
 
 def get_accuracy(groupby_operator=False, groupby_carries=False):
+    '''
+    Get accuracy of all problem instances across all participants.
+    '''
     total_result = get_total_result()
 
     if (groupby_operator == False) and (groupby_carries == False):
@@ -167,6 +179,9 @@ def get_accuracy(groupby_operator=False, groupby_carries=False):
 
 
 def get_mean_solving_time(groupby_operator=False, groupby_carries=False):
+    '''
+    Get the mean of all solving time instances across all participants.
+    '''
     total_result = get_total_result()
 
     if (groupby_operator == False) and (groupby_carries == False):
@@ -186,6 +201,7 @@ def get_mean_solving_time(groupby_operator=False, groupby_carries=False):
 
 def get_accuracy_by_operator():
     '''
+    Get all instances of the mean solving time for each participant grouped by operator.
     Returns
     - df : pandas.dataframe. Each row has accuracy of a person.
     '''
@@ -206,6 +222,9 @@ def get_accuracy_by_operator():
 
 
 def get_accuracy_by_carries(operator):
+    '''
+    Get all instances of the mean solving time for each participant grouped by carries if an operator is given.
+    '''
     df_results = get_results(operator)
 
     df_accuracy_carries_list = list()
@@ -220,7 +239,7 @@ def get_accuracy_by_carries(operator):
     return mean_accuract_by_carries, std_accuracy_by_carries, df_accuracy_carries
 
 
-def get_mean_mean_solving_time_by_operator():
+def get_mean_solving_time_by_operator():
     '''
     Returns
     - df : pandas.dataframe. Each row has the mean solving time of a person.
@@ -242,7 +261,7 @@ def get_mean_mean_solving_time_by_operator():
     return mean_mean_solving_time_by_operator, std_mean_solving_time_by_operator, df_mean_st_operator
 
 
-def get_mean_mean_solving_time_by_carries(operator):
+def get_mean_solving_time_by_operator(operator):
     df_results = get_results(operator)
     for i in range(len(df_results)):
         df_results[i] = filter_for_mean_solving_time(df_results[i])
@@ -257,6 +276,7 @@ def get_mean_mean_solving_time_by_carries(operator):
     std_mean_solving_time_by_carries = df_mean_st_carries.groupby(['carries'])['mean_solving_time'].std()
 
     return mean_mean_solving_time_by_carries, std_mean_solving_time_by_carries, df_mean_st_carries
+
 
 def read_result_file(file_path):
     df_results = pd.read_csv(file_path, sep='\t', header=None,
@@ -493,7 +513,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
     #total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
     #mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
-    mean_solving_time_by_operator, std_solving_time_by_operator, _ = get_mean_mean_solving_time_by_operator()
+    mean_solving_time_by_operator, std_solving_time_by_operator, _ = get_mean_solving_time_by_operator()
 
     #x = ['Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
     x = ['+', '−', '×', '÷', 'mod']
@@ -547,7 +567,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
     #mean_solving_time_by_carries, std_solving_time_by_carries = get_mean_solving_time(groupby_operator=True, groupby_carries=True)
 
     for operator in operators:
-        mean_solving_time_by_carries, std_accuracy_by_carries, _ = get_mean_mean_solving_time_by_carries(operator)
+        mean_solving_time_by_carries, std_accuracy_by_carries, _ = get_mean_solving_time_by_operator(operator)
 
         carries_list = list(mean_solving_time_by_carries.keys())
         x = [str(carries) for carries in carries_list]
@@ -649,7 +669,6 @@ def plot_solving_time_by_operator(mode='save', file_format='pdf'):
     plt.clf()
 
 
-# TODO: Implement!
 def plot_solving_time_by_carries(mode='save', file_format='pdf'):
 
     mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
@@ -868,9 +887,9 @@ def save_csv_files():
         df_accuracy_carries.to_csv('{}/carries_{}.csv'.format(dir_accuracy, operator), index=False)
 
     create_dir(dir_st_correct)
-    _, _, df_mean_st_operator = get_mean_mean_solving_time_by_operator()
+    _, _, df_mean_st_operator = get_mean_solving_time_by_operator()
     df_mean_st_operator.to_csv('{}/operators.csv'.format(dir_st_correct), index=False)
 
     for operator in data_utils.operators_list:
-        _, _, df_mean_st_carries = get_mean_mean_solving_time_by_carries(operator)
+        _, _, df_mean_st_carries = get_mean_solving_time_by_operator(operator)
         df_mean_st_carries.to_csv('{}/carries_{}.csv'.format(dir_st_correct, operator), index=False)
