@@ -860,7 +860,7 @@ def plot_mean_solving_time_by_problems_for_carries(mode='save', file_format='pdf
         plt.clf()
 
 
-def plot_all(mode='save', file_format='pdf'):
+def plot_all_mst_by_problems(mode='save', file_format='pdf'):
     plot_mean_solving_time_by_problems(mode=mode, file_format=file_format)
     plot_mean_solving_time_by_problems_for_operators(mode=mode, file_format=file_format)
     plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
