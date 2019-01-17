@@ -285,32 +285,35 @@ def read_result_file(file_path):
     return df_results
 
 
-
-
-'''
 def plot_accuracy_by_operator(mode='save', file_format='pdf'):
 
     total_accuracy = get_accuracy(groupby_operator=False, groupby_carries=False)
     accuracy_by_operator = get_accuracy(groupby_operator=True, groupby_carries=False)
 
-    x = ('Add', 'Subtract', 'Multiply', 'Divide', 'Modulo')
-    y = (accuracy_by_operator['add'],
+    # = ('Add', 'Subtract', 'Multiply', 'Divide', 'Modulo')
+    x = ['+', '−', '×', '÷', 'mod']
+    y = [accuracy_by_operator['add'],
         accuracy_by_operator['subtract'],
         accuracy_by_operator['multiply'],
         accuracy_by_operator['divide'],
         accuracy_by_operator['modulo']
-    )
+    ]
 
-    plt.ylim(0.0, 1.0)
-    plt.yticks(np.arange(0, 1.1, step=0.1))
+    plt.figure(figsize=(len(x)-1,4))
+
+    plt.ylim(0.8, 1.0)
+    plt.yticks(np.arange(0.8, 1.0, step=0.05))
     plt.grid(axis='y')
-    plt.ylabel('Accuracy')
-    plt.title('Accuracy by operator')
+    #plt.xlabel('Operator', fontsize=font_size['xlabel'])
+    plt.ylabel('Accuracy', fontsize=font_size['ylabel'])
+    plt.tick_params(axis='x', labelsize=font_size['xtick'])
+    plt.tick_params(axis='y', labelsize=font_size['ytick'])
+    #plt.title('Accuracy by operator')
 
-    plt.plot(x, y, ':o', label='Each operator')
+    plt.plot(x, y, 'r:o', label='Each operator')
     #plt.bar(x, y, align='center')
-    plt.hlines(total_accuracy, xmin=-0.5, xmax=len(x)-0.5, colors='r', label='All operators')
-    plt.legend()
+    plt.hlines(total_accuracy, xmin=-0.5, xmax=len(x)-0.5, colors='g', label='All operators')
+    plt.legend(loc='lower left')
 
     if mode == 'show':
         plt.show()
@@ -335,18 +338,23 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
         x = [str(carries) for carries in carries_list]
         y = list(accuracy_by_carries[operator].get_values())
 
-        plt.ylim(0.0, 1.0)
-        plt.yticks(np.arange(0, 1.1, step=0.1))
+        plt.figure(figsize=(len(x)-1,4))
+        plt.ylim(0.8, 1.0)
+        plt.yticks(np.arange(0.8, 1.05, step=0.05))
         plt.grid(axis='y')
         plt.ylabel('Accuracy')
-        plt.title('[{operator}] Accuracy by carries'.format(operator=operator.capitalize()))
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.ylabel('Accuracy', fontsize=font_size['ylabel'])
+        plt.tick_params(axis='x', labelsize=font_size['xtick'])
+        plt.tick_params(axis='y', labelsize=font_size['ytick'])
+        #plt.title('[{operator}] Accuracy by carries'.format(operator=operator.capitalize()))
 
         #plt.bar(x, y, align='center')
-        plt.plot(x, y, ':o', label='Carry datasets')
+        plt.plot(x, y, 'r:o', label='Carry datasets')
         plt.hlines(accuracy_by_operator[operator],
-            xmin=-0.5, xmax=len(x)-0.5, colors='r',
-            label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
-        plt.legend()
+            xmin=-0.5, xmax=len(x)-0.5, colors='g',
+            label='Operation dataset'.format(operator=operator.capitalize()))
+        plt.legend(loc='lower left')
 
         if mode == 'show':
             plt.show()
@@ -358,9 +366,9 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
                 extension=file_format
             )
             plt.savefig(plot_fig_path, bbox_inches='tight')
-        plt.clf()'''
+        plt.clf()
 
-def plot_accuracy_by_operator(mode='save', file_format='pdf'):
+def plot_mean_accuracy_by_operator(mode='save', file_format='pdf'):
     accuracy_by_operator, std_accuracy_by_operator, _ = get_accuracy_by_operator()
 
     #x = ['Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
@@ -401,7 +409,7 @@ def plot_accuracy_by_operator(mode='save', file_format='pdf'):
         plt.show()
     if mode == 'save':
         create_dir(dir_plot_fig)
-        plot_fig_path = '{plot_dir}/accuracy_by_operator.{extension}'.format(
+        plot_fig_path = '{plot_dir}/mean_accuracy_by_operator.{extension}'.format(
             plot_dir=dir_plot_fig,
             extension=file_format
         )
@@ -409,7 +417,7 @@ def plot_accuracy_by_operator(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_accuracy_by_carries(mode='save', file_format='pdf'):
+def plot_mean_accuracy_by_carries(mode='save', file_format='pdf'):
     for operator in operators:
         mean_accuracy_by_carries, std_accuracy_by_carries, _ = get_accuracy_by_carries(operator)
 
@@ -443,7 +451,102 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
             plt.show()
         if mode == 'save':
             create_dir(dir_plot_fig)
-            plot_fig_path = '{plot_dir}/accuracy_by_carries_{operator}.{extension}'.format(
+            plot_fig_path = '{plot_dir}/mean_accuracy_by_carries_{operator}.{extension}'.format(
+                plot_dir=dir_plot_fig,
+                operator=operator,
+                extension=file_format
+            )
+            plt.savefig(plot_fig_path, bbox_inches='tight')
+        plt.clf()
+
+def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
+
+    total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
+    mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
+    #mean_solving_time_by_operator, std_solving_time_by_operator, _ = get_mean_solving_time_by_operator()
+
+    #x = ['Add', 'Subtract', 'Multiply', 'Divide', 'Modulo']
+    x = ['+', '−', '×', '÷', 'mod']
+    y = [mean_solving_time_by_operator['add'],
+        mean_solving_time_by_operator['subtract'],
+        mean_solving_time_by_operator['multiply'],
+        mean_solving_time_by_operator['divide'],
+        mean_solving_time_by_operator['modulo']
+    ]
+    e = [errorbar_std * std_solving_time_by_operator['add'],
+        errorbar_std * std_solving_time_by_operator['subtract'],
+        errorbar_std * std_solving_time_by_operator['multiply'],
+        errorbar_std * std_solving_time_by_operator['divide'],
+        errorbar_std * std_solving_time_by_operator['modulo']
+    ]
+
+    plt.figure(figsize=(len(x)-1,4))
+    #plt.xlabel('Operator')
+    plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+    plt.tick_params(axis='x', labelsize=font_size['xtick'])
+    plt.tick_params(axis='y', labelsize=font_size['ytick'])
+
+    #plt.ylim(0.0, 60.0)
+    #plt.ylim(0.0, 100.0)
+    #plt.yticks(np.arange(0, 1.1, step=0.1))
+    plt.grid(axis='y')
+    #plt.title('Mean solving time by operator')
+
+    #plt.plot(x, y, ':o', label='Each operator')
+    plt.errorbar(x, y, e, fmt='r:o', ecolor='orange', capsize=3)
+
+    #plt.bar(x, y, align='center')
+    '''plt.hlines(total_mean_solving_time, xmin=-0.5, xmax=len(x)-0.5, colors='g', label='All operators')
+    plt.legend()'''
+
+    if mode == 'show':
+        plt.show()
+    if mode == 'save':
+        create_dir(dir_plot_fig)
+        plot_fig_path = '{plot_dir}/mean_solving_time_by_operator.{extension}'.format(
+            plot_dir=dir_plot_fig,
+            extension=file_format
+        )
+        plt.savefig(plot_fig_path, bbox_inches='tight')
+    plt.clf()
+
+
+def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
+
+    for operator in operators:
+        mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=True)
+
+        carries_list = list(mean_solving_time_by_operator[operator].keys())
+        x = [str(carries) for carries in carries_list]
+        y = list(mean_solving_time_by_operator[operator].get_values())
+        e = list(std_solving_time_by_operator[operator].get_values())
+        for i in range(len(e)):
+            e[i] = errorbar_std * e[i]
+
+        plt.figure(figsize=(len(x)-1,4))
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+        #plt.tick_params(axis='x', labelsize=font_size['xtick'])
+        plt.tick_params(axis='y', labelsize=font_size['ytick'])
+
+        #plt.ylim(0.0, 60.0)
+        #plt.yticks(np.arange(0, 1.1, step=0.1))
+        plt.grid(axis='y')
+        #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
+
+        #plt.bar(x, y, align='center')
+        #plt.plot(x, y, ':o', label='Carry datasets')
+        plt.errorbar(x, y, e, fmt='r:o', ecolor='orange', capsize=3)
+        '''plt.hlines(mean_solving_time_by_operator[operator],
+            xmin=-0.5, xmax=len(x)-0.5, colors='g',
+            label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
+        plt.legend()'''
+
+        if mode == 'show':
+            plt.show()
+        if mode == 'save':
+            create_dir(dir_plot_fig)
+            plot_fig_path = '{plot_dir}/mean_solving_time_by_carries_{operator}.{extension}'.format(
                 plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
@@ -452,7 +555,7 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
         plt.clf()
 
 
-def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
+def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
     #total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
     #mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
@@ -496,7 +599,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         plt.show()
     if mode == 'save':
         create_dir(dir_plot_fig)
-        plot_fig_path = '{plot_dir}/mean_solving_time_by_operator.{extension}'.format(
+        plot_fig_path = '{plot_dir}/mean_mean_solving_time_by_operator.{extension}'.format(
             plot_dir=dir_plot_fig,
             extension=file_format
         )
@@ -504,7 +607,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
+def plot_mean_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
     for operator in operators:
         mean_mean_solving_time_by_carries, std_mean_solving_time_by_carries, _ = get_mean_solving_time_by_carries(operator)
@@ -518,7 +621,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
         plt.figure(figsize=(len(x)-1,4))
         plt.xlabel('Carries', fontsize=font_size['xlabel'])
-        plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+        plt.ylabel('Mean solving time (sec.)', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -539,7 +642,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
             plt.show()
         if mode == 'save':
             create_dir(dir_plot_fig)
-            plot_fig_path = '{plot_dir}/mean_solving_time_by_carries_{operator}.{extension}'.format(
+            plot_fig_path = '{plot_dir}/mean_mean_solving_time_by_carries_{operator}.{extension}'.format(
                 plot_dir=dir_plot_fig,
                 operator=operator,
                 extension=file_format
