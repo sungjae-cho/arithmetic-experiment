@@ -482,7 +482,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
     plt.figure(figsize=(len(x)-1,4))
     #plt.xlabel('Operator')
-    plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+    plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
     plt.tick_params(axis='x', labelsize=font_size['xtick'])
     plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -525,7 +525,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
         plt.figure(figsize=(len(x)-1,4))
         plt.xlabel('Carries', fontsize=font_size['xlabel'])
-        plt.ylabel('Solving time (sec.)', fontsize=font_size['ylabel'])
+        plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
         #plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -578,7 +578,7 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
     plt.figure(figsize=(len(x)-1,4))
     #plt.xlabel('Operator')
-    plt.ylabel('Mean solving time (sec.)', fontsize=font_size['ylabel'])
+    plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
     plt.tick_params(axis='x', labelsize=font_size['xtick'])
     plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -621,7 +621,7 @@ def plot_mean_mean_solving_time_by_carries(mode='save', file_format='pdf'):
 
         plt.figure(figsize=(len(x)-1,4))
         plt.xlabel('Carries', fontsize=font_size['xlabel'])
-        plt.ylabel('Mean solving time (sec.)', fontsize=font_size['ylabel'])
+        plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -682,8 +682,8 @@ def boxplot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     #plt.yticks([0, 10, 20, 30, 40, 50] + list(range(60,max_ylim,30)))
 
     plt.grid(axis='y')
-    plt.title('Solving time by operator')
-    plt.ylabel('Solving time (sec.)')
+    plt.title('Response by operator')
+    plt.ylabel('Response time (sec.)')
     plt.xlabel('Operator')
 
     plt.boxplot([total_result,
@@ -718,7 +718,7 @@ def boxplot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.figure(figsize=(8,8))
         plt.grid(axis='y')
         plt.title('[{operator}] Solving time by carries'.format(operator=operator.capitalize()))
-        plt.ylabel('Solving time (sec.)')
+        plt.ylabel('Response time (sec.)')
         plt.xlabel('Carries')
 
         mean_mean_solving_time_by_carries, std_mean_solving_time_by_carries, df_mean_st_carries = get_mean_solving_time_by_carries(operator)
@@ -783,7 +783,7 @@ def plot_mean_solving_time_by_problems(mode='save', file_format='pdf'):
         # Plot setting stage
         plt.title('Mean solving time by experienced problems')
         plt.xlabel('Experienced problems')
-        plt.ylabel('Mean solving time (sec.)')
+        plt.ylabel('Response time (sec.)')
 
         # Plot stage
         plt.plot(x, y, ':o', label=operator)
@@ -809,7 +809,7 @@ def plot_solving_time(df_result, subject_index):
         sub_index=subject_index
     ))
     plt.xlabel('Experienced problems')
-    plt.ylabel('Solving time (sec.)')
+    plt.ylabel('Response time (sec.)')
 
     x = np.arange(len(df_result))
     y = df_result['solving_time']
@@ -831,7 +831,7 @@ def plot_solving_time_for_carries(df_result, subject_index, mode='save', file_fo
             carries=carries
         ))
         plt.xlabel('Experienced problems')
-        plt.ylabel('Solving time (sec.)')
+        plt.ylabel('Response time (sec.)')
 
         df_result_by_carries = filter_carries(df_result, carries)
 
@@ -889,7 +889,7 @@ def plot_mean_solving_time_by_problems_for_operators(mode='save', file_format='p
             operator=operator.capitalize()
         ))
         plt.xlabel('Experienced problems')
-        plt.ylabel('Mean solving time (sec.)')
+        plt.ylabel('Response time (sec.)')
 
         # Plot stage
         plt.plot(x, y, ':o')
@@ -944,7 +944,7 @@ def plot_mean_solving_time_by_problems_for_carries(mode='save', file_format='pdf
                 operator=operator.capitalize()
             ))
             plt.xlabel('Experienced problems')
-            plt.ylabel('Mean solving time (sec.)')
+            plt.ylabel('Response time (sec.)')
 
             # Plot stage
             plt.plot(x, y, ':o', label=carries_label)
