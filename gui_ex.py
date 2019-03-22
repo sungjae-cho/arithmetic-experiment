@@ -1,60 +1,89 @@
 from tkinter import *
 import tkinter.font
-
-def next_problem():
-    pass
+import time
 
 
-def callback():
-    str_message = "Wrong!\nTrue answer:\n{}".format("10010")
-    Submit_message = Label(master, text=str_message, font=font_obj)
-    Submit_message.grid(row=6,column=1, columnspan=n_result_digits)
+class Quiz(object):
 
-    button_next = Button(master, text="Next", font=font_obj, command=next_problem)
-    button_next.grid(row=7,column=1, columnspan=n_result_digits)
+    def __init__(self, question_bank, operator):
+        self.master = self.setup()
+        self.responses = []
+        self.operator = operator
+        self.question_bank = question_bank
+        self.extra_panels = []
+        self.start_time = None
 
-master = Tk()
 
-window_h = 7
-window_w = 5
-master.grid_rowconfigure(0, weight=1)
-master.grid_rowconfigure(window_h+1, weight=1)
-master.grid_columnconfigure(0, weight=1)
-master.grid_columnconfigure(window_w+1, weight=1)
+    def setup(self):
+        master = Tk()
 
-font_obj = tkinter.font.Font(size=36, weight='bold')
-digits = [0, 1]
-n_result_digits = 5
-n_operand_digits = 4
-n_operands = 2
-operator_sign = '+'
-operand1 = [0, 1, 0, 1]
-operand2 = [1, 1, 0, 1]
-operands = [operand1, operand2]
+        window_h = 7
+        window_w = 5
+        master.grid_rowconfigure(0, weight=1)
+        master.grid_rowconfigure(window_h+1, weight=1)
+        master.grid_columnconfigure(0, weight=1)
+        master.grid_columnconfigure(window_w+1, weight=1)
+        return master
 
-for i_row in range(n_operands):
-    for i_col in range(n_operand_digits):
-        op_digit = Label(master, text=str(operands[i_row][i_col]), font=font_obj)
-        op_digit.grid(row=i_row+1, column=i_col+2)
 
-sign = Label(master, text=operator_sign, font=font_obj)
-sign.grid(row=n_operands, column=1)
+    def open_question(self):
+        if not self.question_bank:
+            self.master.destroy()
+            return
 
-v_list = list()
+        operand1, operand2, true_answer = self.question_bank.pop(0)
+        for _ in range(len(self.extra_panels)):
+            self.extra_panels.pop().destroy()
 
-for i in range(n_result_digits):
 
-    v = IntVar()
-    v.set(-1) # initialize
-    v_list.append(v)
+        font_obj = tkinter.font.Font(size=36, weight='bold')
+        digits = [0, 1]
+        n_result_digits = 5
+        n_operand_digits = 4
+        n_operands = 2
+        operands = [operand1, operand2]
 
-    for digit in digits:
-        b = Radiobutton(master, text=str(digit), variable=v, value=digit,
-            indicatoron=0, height=1, width=2, font=font_obj)
-        b.grid(row=digit+3, column=i+1)
-        #b.pack(anchor=W)
+        for i_row in range(n_operands):
+            for i_col in range(n_operand_digits):
+                op_digit = Label(self.master, text=str(operands[i_row][i_col]), font=font_obj)
+                op_digit.grid(row=i_row+1, column=i_col+2)
 
-button_submit = Button(master, text="Submit", font=font_obj, command=callback)
-button_submit.grid(row=5,column=1, columnspan=n_result_digits)
+        sign = Label(self.master, text=self.operator, font=font_obj)
+        sign.grid(row=n_operands, column=1)
 
-mainloop()
+        v_list = list()
+
+        for i in range(n_result_digits):
+
+            v = IntVar()
+            v.set(-1) # initialize
+            v_list.append(v)
+
+            for digit in digits:
+                b = Radiobutton(self.master, text=str(digit), variable=v, value=digit,
+                    indicatoron=0, height=1, width=2, font=font_obj)
+                b.grid(row=digit+3, column=i+1)
+                #b.pack(anchor=W)
+        self.start_time = time.time()
+        cal = lambda : self.callback(true_answer, font_obj, n_result_digits, v_list)
+        button_submit = Button(self.master, text="Submit", font=font_obj, command=cal)
+        button_submit.grid(row=5,column=1, columnspan=n_result_digits)
+        self.master.mainloop()
+
+
+    def callback(self, true_answer, font_obj, n_result_digits, v_list):
+        answer, rt = [v.get() for v in v_list], time.time() - self.start_time
+        self.responses.append((answer, rt))
+        self.start_time = None
+        str_message = "Wrong!\nTrue answer:\n{}".format(true_answer)
+        Submit_message = Label(self.master, text=str_message, font=font_obj)
+        Submit_message.grid(row=6, column=1, columnspan=n_result_digits)
+        button_next = Button(self.master, text="Next", font=font_obj, command=self.open_question)
+        button_next.grid(row=7, column=1, columnspan=n_result_digits)
+        self.extra_panels = [Submit_message, button_next]
+
+
+
+q = Quiz([[[0, 1, 0, 1],  [1, 1, 0, 1], "10110"], [[1, 1, 0, 1],  [1, 1, 1, 1], "10111"]], "-")
+q.open_question()
+print(q.responses)
