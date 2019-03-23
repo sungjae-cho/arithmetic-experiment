@@ -23,9 +23,9 @@ OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷"
 
 
 def get_results_dir():
-    if sys.argv[1] == 'practice':
+    if sys.argv[1].lower() == 'practice':
         PRACTICE = True
-    if sys.argv[1] == 'experiment':
+    if sys.argv[1].lower() == 'experiment':
         PRACTICE = False
     RESULTS_DIR = PRACTICE_RESULTS_DIR if PRACTICE else ACTUAL_RESULTS_DIR
 
@@ -35,7 +35,7 @@ def get_results_dir():
 def get_question_set():
     question_set = sys.argv[2].upper()
     return question_set
-    
+
 
 class ImBored(Exception):
 
