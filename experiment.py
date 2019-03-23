@@ -77,6 +77,16 @@ def get_user_data():
             gender = MALE if g[0].upper() == "M" else FEMALE
         print("Excellent\n")
 
+        major = None
+        while not major:
+            print("What is your major :")
+            m = _get_input()
+            if not m or len(m) < 2:
+                continue
+
+            major = m.upper()
+        print("Wonderful\n")
+
         ability = None
         print("How would you rate your math ability on a scale of 1 -> 4")
         print("4: Very Good")
@@ -97,10 +107,10 @@ def get_user_data():
         info_correct = True if c and c[0].upper() == "Y" else False
 
     # Make sure we have everything we need
-    assert all([year, gender, ability])
+    assert all([year, gender, ability, major])
     print("Okay !! Let's get started !!!\n\n")
 
-    return year, gender, ability
+    return year, gender, ability, major
 
 
 def _valid_birth_year(year):
@@ -121,14 +131,14 @@ def wait_for_user():
         ready = True if r and r[0].upper() == "Y" else False
 
 
-def record_results(year, gender, ability, results):
+def record_results(year, gender, ability, major, results):
     """
     Record user id and results
 
     return: None
     """
     id = str(SEOUL.localize(datetime.datetime.now()))[:-7].replace(" ", "_").replace(":", "_")
-    file_name = "{id}_{year}_{gender}_{ability}.result".format(id=id, year=year, gender=gender, ability=ability)
+    file_name = "{id}_{year}_{gender}_{ability}_{major}.result".format(id=id, year=year, gender=gender, ability=ability, major=major)
     file_name = os.path.join(RESULTS_DIR, file_name)
     print("Writing results to file {}".format(file_name))
     with open(file_name, "w+") as fh:
@@ -257,10 +267,10 @@ def _get_question(question_set, question_type):
 def main():
 
     welcome()
-    year, gender, ability = get_user_data()
+    year, gender, ability, major = get_user_data()
     wait_for_user()
     experiment_results = run_ui_experiment()
-    record_results(year, gender, ability, experiment_results)
+    record_results(year, gender, ability, major, experiment_results)
 
 
 if __name__ == "__main__":
