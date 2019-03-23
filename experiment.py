@@ -2,6 +2,7 @@ from experiment_utils import evenly_load_questions
 import random, time, os, numpy, datetime, pytz
 from gui_ex import Quiz
 from copy import deepcopy
+import sys # to get arguments from the command line execution.
 SEOUL = pytz.timezone('Asia/Seoul')
 PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
@@ -17,10 +18,19 @@ DIVIDE = 0 # 10
 MODULO = 0 # 10
 QUESTION_SET = "SUBTRACT"
 DIGIT_OPERANDS = 4
-PRACTICE = True
 
-RESULTS_DIR = PRACTICE_RESULTS_DIR if PRACTICE else ACTUAL_RESULTS_DIR
+
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
+
+
+def get_results_dir():
+    if sys.argv[1] == 'practice':
+        PRACTICE = True
+    if sys.argv[1] == 'experiment':
+        PRACTICE = False
+    RESULTS_DIR = PRACTICE_RESULTS_DIR if PRACTICE else ACTUAL_RESULTS_DIR
+
+    return RESULTS_DIR
 
 
 class ImBored(Exception):
@@ -139,7 +149,7 @@ def record_results(year, gender, ability, major, results):
     """
     id = str(SEOUL.localize(datetime.datetime.now()))[:-7].replace(" ", "_").replace(":", "_")
     file_name = "{id}_{year}_{gender}_{ability}_{major}.result".format(id=id, year=year, gender=gender, ability=ability, major=major)
-    file_name = os.path.join(RESULTS_DIR, file_name)
+    file_name = os.path.join(get_results_dir(), file_name)
     print("Writing results to file {}".format(file_name))
     with open(file_name, "w+") as fh:
         for result in results:
