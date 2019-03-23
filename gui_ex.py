@@ -38,7 +38,7 @@ class Quiz(object):
 
         font_obj = tkinter.font.Font(size=36, weight='bold')
         digits = [0, 1]
-        n_result_digits = 5
+        n_result_digits = 5 if self.operator == "+" else 4
         n_operand_digits = 4
         n_operands = 2
         operands = [operand1, operand2]
@@ -62,13 +62,13 @@ class Quiz(object):
             for digit in digits:
                 b = Radiobutton(self.master, text=str(digit), variable=v, value=digit,
                     indicatoron=0, height=1, width=2, font=font_obj)
-                b.grid(row=digit+3, column=i+1)
-                #b.pack(anchor=W)
+                b.grid(row=digit+3, column=i+1 if self.operator == "+" else i+2)
+                #b.pack(side=LEFT)
 
         self.start_time = time.time()
         cal = lambda : self.callback(true_answer, font_obj, n_result_digits, v_list)
         button_submit = Button(self.master, text="Submit", font=font_obj, command=cal)
-        button_submit.grid(row=5,column=1, columnspan=n_result_digits)
+        button_submit.grid(row=5,column=1 if self.operator == "+" else 2, columnspan=n_result_digits)
         self.master.mainloop()
 
 
