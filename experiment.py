@@ -182,7 +182,7 @@ def run_ui_experiment():
     print("Thank You !!!")
     results = []
     for i in range(len(quiz.responses)):
-        results.append(dict(qid=question_bank_copy[i][0] + question_bank_copy[i][1], correct=quiz.responses[i][2], duration=round(quiz.responses[i][1], 3),
+        results.append(dict(qid=question_bank_copy[i][0].tolist() + question_bank_copy[i][1].tolist(), correct=quiz.responses[i][2], duration=round(quiz.responses[i][1], 3),
                             user_answer=quiz.responses[i][0], correct_answer=question_bank_copy[i][2], operand_digits=DIGIT_OPERANDS,
                             question_type=QUESTION_SET, num_carries=question_bank_copy[i][3]))
 
