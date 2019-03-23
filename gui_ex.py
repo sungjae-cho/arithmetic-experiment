@@ -12,6 +12,7 @@ class Quiz(object):
         self.question_bank = question_bank
         self.extra_panels = []
         self.start_time = None
+        self.font_default = tkinter.font.Font(size=36, weight='bold')
         self.font_true_answer = tkinter.font.Font(size=34, weight='bold')
 
 
@@ -37,7 +38,7 @@ class Quiz(object):
             self.extra_panels.pop().destroy()
 
 
-        font_obj = tkinter.font.Font(size=36, weight='bold')
+
         digits = [0, 1]
         n_result_digits = 5 if self.operator == "+" else 4
         n_operand_digits = 4
@@ -46,10 +47,10 @@ class Quiz(object):
 
         for i_row in range(n_operands):
             for i_col in range(n_operand_digits):
-                op_digit = Label(self.master, text=str(operands[i_row][i_col]), font=font_obj)
+                op_digit = Label(self.master, text=str(operands[i_row][i_col]), font=self.font_default)
                 op_digit.grid(row=i_row+1, column=i_col+2)
 
-        sign = Label(self.master, text=self.operator, font=font_obj)
+        sign = Label(self.master, text=self.operator, font=self.font_default)
         sign.grid(row=n_operands, column=1, ipadx=1)
 
         v_list = list()
@@ -62,18 +63,18 @@ class Quiz(object):
 
             for digit in digits:
                 b = Radiobutton(self.master, text=str(digit), variable=v, value=digit,
-                    indicatoron=0, height=1, width=2, font=font_obj)
+                    indicatoron=0, height=1, width=2, font=self.font_default)
                 b.grid(row=digit+3, column=i+1 if self.operator == "+" else i+2)
                 #b.pack(side=LEFT)
 
         self.start_time = time.time()
-        cal = lambda : self.callback(true_answer, font_obj, n_operand_digits, v_list)
-        button_submit = Button(self.master, text="Submit", font=font_obj, command=cal)
+        cal = lambda : self.callback(true_answer, n_operand_digits, v_list)
+        button_submit = Button(self.master, text="Submit", font=self.font_default, command=cal)
         button_submit.grid(row=5,column=1 if self.operator == "+" else 2, columnspan=n_result_digits)
         self.master.mainloop()
 
 
-    def callback(self, true_answer, font_obj, n_operand_digits, v_list):
+    def callback(self, true_answer, n_operand_digits, v_list):
         if not self.start_time:
             return
 
@@ -91,6 +92,6 @@ class Quiz(object):
         str_message = "{}\nTrue answer:\n{}".format("Wrong" if answer != true_answer else "Correct", "".join(str(i) for i in true_answer))
         Submit_message = Label(self.master, text=str_message, font=self.font_true_answer)
         Submit_message.grid(row=6, column=1, columnspan=n_operand_digits+1)
-        button_next = Button(self.master, text="Next", font=font_obj, command=self.open_question)
+        button_next = Button(self.master, text="Next", font=self.font_default, command=self.open_question)
         button_next.grid(row=7, column=1, columnspan=n_operand_digits+1)
         self.extra_panels = [Submit_message, button_next]
