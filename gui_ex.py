@@ -12,6 +12,7 @@ class Quiz(object):
         self.question_bank = question_bank
         self.extra_panels = []
         self.start_time = None
+        self.font_true_answer = tkinter.font.Font(size=34, weight='bold')
 
 
     def setup(self):
@@ -49,7 +50,7 @@ class Quiz(object):
                 op_digit.grid(row=i_row+1, column=i_col+2)
 
         sign = Label(self.master, text=self.operator, font=font_obj)
-        sign.grid(row=n_operands, column=1)
+        sign.grid(row=n_operands, column=1, ipadx=1)
 
         v_list = list()
 
@@ -88,7 +89,7 @@ class Quiz(object):
         self.responses.append((answer, rt, true_answer == answer))
         self.start_time = None
         str_message = "{}\nTrue answer:\n{}".format("Wrong" if answer != true_answer else "Correct", "".join(str(i) for i in true_answer))
-        Submit_message = Label(self.master, text=str_message, font=font_obj)
+        Submit_message = Label(self.master, text=str_message, font=self.font_true_answer)
         Submit_message.grid(row=6, column=1, columnspan=n_operand_digits+1)
         button_next = Button(self.master, text="Next", font=font_obj, command=self.open_question)
         button_next.grid(row=7, column=1, columnspan=n_operand_digits+1)
