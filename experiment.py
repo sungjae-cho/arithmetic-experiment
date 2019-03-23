@@ -10,12 +10,6 @@ ACTUAL_RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
 PRACTICE_RESULTS_DIR = os.path.join(USER_DATA_PATH, ".practice_results")
 MALE, FEMALE = range(1, 3)
 BAD, BAVERAGE, AAVERAGE, GOOD = range(1, 5)
-# Please use the # specified values to specify the correct number of questions
-ADD = 0 # 8
-SUBTRACT = 1 # 10
-MULTIPLY = 0 # 5
-DIVIDE = 0 # 10
-MODULO = 0 # 10
 DIGIT_OPERANDS = 4
 
 
@@ -35,6 +29,19 @@ def get_results_dir():
 def get_question_set():
     question_set = sys.argv[2].upper()
     return question_set
+
+
+def get_problems_per_carries():
+    problems_per_carries = int(sys.argv[3])
+    question_set = get_question_set()
+
+    operators = ["ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MODULO"]
+    problems_list = [0] * len(operators)
+
+    i_op = operators.index(question_set)
+    problems_list[i_op] = problems_per_carries
+
+    return problems_list
 
 
 class ImBored(Exception):
@@ -169,6 +176,7 @@ def evaluate_readiness(input, results):
 
 
 def run_experiment():
+    [ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO] = get_problems_per_carries()
     question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     results = []
     total_nun_questions = sum([len(qs) for qs in question_set.values()])
@@ -196,6 +204,7 @@ def run_experiment():
     return results
 
 def run_ui_experiment():
+    [ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO] = get_problems_per_carries()
     question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     extracted_question_bank = [(question[0], question[1], question[2], question[3]) for question in question_set[get_question_set().lower()]]
     question_bank_copy = deepcopy(extracted_question_bank)
