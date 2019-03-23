@@ -1,7 +1,8 @@
 from experiment_utils import evenly_load_questions
-import random, time, os, numpy, datetime
+import random, time, os, numpy, datetime, pytz
 from gui_ex import Quiz
 from copy import deepcopy
+SEOUL = pytz.timezone('Asia/Seoul')
 PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
 ACTUAL_RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
@@ -126,7 +127,7 @@ def record_results(year, gender, ability, results):
 
     return: None
     """
-    id = str(datetime.datetime.utcnow())[:-7].replace(" ", "_").replace(":", "_")
+    id = str(SEOUL.localize(datetime.datetime.now()))[:-7].replace(" ", "_").replace(":", "_")
     file_name = "{id}_{year}_{gender}_{ability}.result".format(id=id, year=year, gender=gender, ability=ability)
     file_name = os.path.join(RESULTS_DIR, file_name)
     print("Writing results to file {}".format(file_name))
@@ -146,7 +147,6 @@ def evaluate_readiness(input, results):
 def run_experiment():
     question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     results = []
-    print(question_set)
     total_nun_questions = sum([len(qs) for qs in question_set.values()])
     try:
         while question_set:
