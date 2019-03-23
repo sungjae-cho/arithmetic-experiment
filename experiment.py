@@ -1,5 +1,7 @@
 from experiment_utils import evenly_load_questions
 import random, time, os, numpy, datetime
+from gui_ex import Quiz
+from copy import deepcopy
 PROJ_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 USER_DATA_PATH = os.path.join(PROJ_PATH, "user_data")
 ACTUAL_RESULTS_DIR = os.path.join(USER_DATA_PATH, "results")
@@ -8,11 +10,11 @@ MALE, FEMALE = range(1, 3)
 BAD, BAVERAGE, AAVERAGE, GOOD = range(1, 5)
 # Please use the # specified values to specify the correct number of questions
 ADD = 0 # 8
-SUBTRACT = 0 # 10
+SUBTRACT = 1 # 10
 MULTIPLY = 0 # 5
-DIVIDE = 10 # 10
+DIVIDE = 0 # 10
 MODULO = 0 # 10
-QUESTION_SET = "DIVIDE"
+QUESTION_SET = "SUBTRACT"
 DIGIT_OPERANDS = 4
 PRACTICE = True
 
@@ -127,6 +129,7 @@ def record_results(year, gender, ability, results):
     id = str(datetime.datetime.utcnow())[:-7].replace(" ", "_").replace(":", "_")
     file_name = "{id}_{year}_{gender}_{ability}.result".format(id=id, year=year, gender=gender, ability=ability)
     file_name = os.path.join(RESULTS_DIR, file_name)
+    print("Writing results to file {}".format(file_name))
     with open(file_name, "w+") as fh:
         for result in results:
             result_string = "{qid}\t{correct}\t{duration}\t{user_answer}\t{correct_answer}\t{operand_digits}\t" \
@@ -143,6 +146,7 @@ def evaluate_readiness(input, results):
 def run_experiment():
     question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
     results = []
+    print(question_set)
     total_nun_questions = sum([len(qs) for qs in question_set.values()])
     try:
         while question_set:
@@ -165,6 +169,24 @@ def run_experiment():
     print("\n Great Job: You got {correct}/{total}".format(correct=len([1 for result in results if result["correct"]]),
                                                            total=len(results)))
     print("Thank You !!!")
+    return results
+
+def run_ui_experiment():
+    question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
+    extracted_question_bank = [(question[0], question[1], question[2], question[3]) for question in question_set[QUESTION_SET.lower()]]
+    question_bank_copy = deepcopy(extracted_question_bank)
+    quiz = Quiz(extracted_question_bank, OPERATION_DICT[QUESTION_SET.upper()])
+    quiz.open_question()
+    print("\n Great Job: You got {correct}/{total}".format(correct=len([1 for result in quiz.responses if result[2]]),
+                                                           total=len(quiz.responses)))
+    print("Thank You !!!")
+    results = []
+    for i in range(len(quiz.responses)):
+        results.append(dict(qid=question_bank_copy[i][0] + question_bank_copy[i][1], correct=quiz.responses[i][2], duration=round(quiz.responses[i][1], 3),
+                            user_answer=quiz.responses[i][0], correct_answer=question_bank_copy[i][2], operand_digits=DIGIT_OPERANDS,
+                            question_type=QUESTION_SET, num_carries=question_bank_copy[i][3]))
+
+    assert len(results) == len(question_bank_copy)
     return results
 
 
@@ -237,7 +259,7 @@ def main():
     welcome()
     year, gender, ability = get_user_data()
     wait_for_user()
-    experiment_results = run_experiment()
+    experiment_results = run_ui_experiment()
     record_results(year, gender, ability, experiment_results)
 
 
