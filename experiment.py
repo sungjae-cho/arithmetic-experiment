@@ -16,7 +16,6 @@ SUBTRACT = 1 # 10
 MULTIPLY = 0 # 5
 DIVIDE = 0 # 10
 MODULO = 0 # 10
-QUESTION_SET = "SUBTRACT"
 DIGIT_OPERANDS = 4
 
 
@@ -32,6 +31,11 @@ def get_results_dir():
 
     return RESULTS_DIR
 
+
+def get_question_set():
+    question_set = sys.argv[2].upper()
+    return question_set
+    
 
 class ImBored(Exception):
 
@@ -130,7 +134,7 @@ def _valid_birth_year(year):
 def wait_for_user():
     ready = False
     print("You are now going to answer some binary math questions.")
-    print("These questions will involve {0} operations.".format(QUESTION_SET))
+    print("These questions will involve {0} operations.".format(get_question_set()))
     print("Please answer these questions as quickly and accurately as possible.")
     print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
     print("You can leave the experiment anytime by typing 'QUIT' in response to the "
@@ -193,9 +197,9 @@ def run_experiment():
 
 def run_ui_experiment():
     question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
-    extracted_question_bank = [(question[0], question[1], question[2], question[3]) for question in question_set[QUESTION_SET.lower()]]
+    extracted_question_bank = [(question[0], question[1], question[2], question[3]) for question in question_set[get_question_set().lower()]]
     question_bank_copy = deepcopy(extracted_question_bank)
-    quiz = Quiz(extracted_question_bank, OPERATION_DICT[QUESTION_SET.upper()])
+    quiz = Quiz(extracted_question_bank, OPERATION_DICT[get_question_set().upper()])
     quiz.open_question()
     print("\n Great Job: You got {correct}/{total}".format(correct=len([1 for result in quiz.responses if result[2]]),
                                                            total=len(quiz.responses)))
@@ -204,7 +208,7 @@ def run_ui_experiment():
     for i in range(len(quiz.responses)):
         results.append(dict(qid=question_bank_copy[i][0].tolist() + question_bank_copy[i][1].tolist(), correct=quiz.responses[i][2], duration=round(quiz.responses[i][1], 3),
                             user_answer=quiz.responses[i][0], correct_answer=question_bank_copy[i][2], operand_digits=DIGIT_OPERANDS,
-                            question_type=QUESTION_SET, num_carries=question_bank_copy[i][3]))
+                            question_type=get_question_set(), num_carries=question_bank_copy[i][3]))
 
     assert len(results) == len(question_bank_copy)
     return results
