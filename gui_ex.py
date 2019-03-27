@@ -33,6 +33,11 @@ class Quiz(object):
             self.master.destroy()
             return
 
+        # Full screen
+        width_value = self.master.winfo_screenwidth()
+        height_value = self.master.winfo_screenheight()
+        self.master.geometry("{}x{}+0+0".format(width_value, height_value))
+
         operand1, operand2, true_answer, _ = self.question_bank.pop(0)
         for _ in range(len(self.extra_panels)):
             self.extra_panels.pop().destroy()
