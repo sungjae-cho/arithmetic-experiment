@@ -990,7 +990,7 @@ def save_csv_files(experiment_name):
         df_mean_st_operator.to_csv(join(dir_save, 'operators.csv'), index=False)
 
         for operator in data_utils.operators_list:
-            _, _, df_mean_st_carries = get_mean_solving_time_by_operator(operator)
+            _, _, df_mean_st_carries = get_mean_solving_time_by_carries(operator)
             df_mean_st_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
 
 
@@ -1008,5 +1008,5 @@ def save_csv_files(experiment_name):
         create_dir(dir_save)
 
         for operator in operators_list:
-            _, _, df_mean_st_carries = get_mean_solving_time_by_operator(operator)
+            _, _, df_mean_st_carries = get_mean_solving_time_by_carries(operator)
             df_mean_st_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
