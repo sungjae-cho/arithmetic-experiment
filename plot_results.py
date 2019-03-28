@@ -969,22 +969,44 @@ def plot_all_mst_by_problems(mode='save', file_format='pdf'):
     plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
 
 
-def save_csv_files():
+def save_csv_files(experiment_name):
     '''
     Create CSV files for ANOVA.
     '''
-    create_dir(dir_accuracy)
-    _, _, df_accuracy_carries = get_accuracy_by_operator()
-    df_accuracy_carries.to_csv('{}/operators.csv'.format(dir_accuracy), index=False)
+    if experiment_name == 'cogsci2019':
+        dir_save = join(dir_accuracy, experiment_name)
+        create_dir(dir_save)
 
-    for operator in data_utils.operators_list:
-        _, _, df_accuracy_carries = get_accuracy_by_carries(operator)
-        df_accuracy_carries.to_csv('{}/carries_{}.csv'.format(dir_accuracy, operator), index=False)
+        _, _, df_accuracy_carries = get_accuracy_by_operator()
+        df_accuracy_carries.to_csv(join(dir_save, 'operators.csv'), index=False)
 
-    create_dir(dir_st_correct)
-    _, _, df_mean_st_operator = get_mean_solving_time_by_operator()
-    df_mean_st_operator.to_csv('{}/operators.csv'.format(dir_st_correct), index=False)
+        for operator in data_utils.operators_list:
+            _, _, df_accuracy_carries = get_accuracy_by_carries(operator)
+            df_accuracy_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
 
-    for operator in data_utils.operators_list:
-        _, _, df_mean_st_carries = get_mean_solving_time_by_operator(operator)
-        df_mean_st_carries.to_csv('{}/carries_{}.csv'.format(dir_st_correct, operator), index=False)
+        dir_save = join(dir_st_correct, experiment_name)
+        create_dir(dir_save)
+        _, _, df_mean_st_operator = get_mean_solving_time_by_operator()
+        df_mean_st_operator.to_csv(join(dir_save, 'operators.csv'), index=False)
+
+        for operator in data_utils.operators_list:
+            _, _, df_mean_st_carries = get_mean_solving_time_by_operator(operator)
+            df_mean_st_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
+
+
+    if experiment_name == 'iccm2019':
+        operators_list = ['add', 'subtract']
+
+        dir_save = join(dir_accuracy, experiment_name)
+        create_dir(dir_save)
+
+        for operator in operators_list:
+            _, _, df_accuracy_carries = get_accuracy_by_carries(operator)
+            df_accuracy_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
+
+        dir_save = join(dir_st_correct, experiment_name)
+        create_dir(dir_save)
+
+        for operator in operators_list:
+            _, _, df_mean_st_carries = get_mean_solving_time_by_operator(operator)
+            df_mean_st_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
