@@ -155,7 +155,7 @@ def get_operator(file_path):
     with open(file_path, 'r') as f:
         first_line = f.readline()
     operator_index = 6
-    operator = first_line.split('\t')[6]
+    operator = first_line.split('\t')[6].lower()
 
     return operator
 
