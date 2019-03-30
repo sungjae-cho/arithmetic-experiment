@@ -19,7 +19,7 @@ class Quiz(object):
     def setup(self):
         master = Tk()
 
-        window_h = 7
+        window_h = 8
         window_w = 5
         master.grid_rowconfigure(0, weight=1)
         master.grid_rowconfigure(window_h+1, weight=1)
@@ -74,8 +74,10 @@ class Quiz(object):
 
         self.start_time = time.time()
         cal = lambda : self.callback(true_answer, n_operand_digits, v_list)
+        empty_space = Label(self.master, text="", font=self.font_true_answer)
+        empty_space.grid(row=5, column=1, columnspan=n_operand_digits+1)
         button_submit = Button(self.master, text="Submit", font=self.font_default, command=cal)
-        button_submit.grid(row=5,column=1 if self.operator == "+" else 2, columnspan=n_result_digits)
+        button_submit.grid(row=6,column=1 if self.operator == "+" else 2, columnspan=n_result_digits)
         self.master.mainloop()
 
 
@@ -96,7 +98,7 @@ class Quiz(object):
         self.start_time = None
         str_message = "{}\nTrue answer:\n{}".format("Wrong" if answer != true_answer else "Correct", "".join(str(i) for i in true_answer))
         Submit_message = Label(self.master, text=str_message, font=self.font_true_answer)
-        Submit_message.grid(row=6, column=1, columnspan=n_operand_digits+1)
+        Submit_message.grid(row=7, column=1, columnspan=n_operand_digits+1)
         button_next = Button(self.master, text="Next", font=self.font_default, command=self.open_question)
-        button_next.grid(row=7, column=1, columnspan=n_operand_digits+1)
+        button_next.grid(row=8, column=1, columnspan=n_operand_digits+1)
         self.extra_panels = [Submit_message, button_next]
