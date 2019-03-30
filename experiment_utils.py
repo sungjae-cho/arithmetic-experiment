@@ -24,26 +24,11 @@ def evenly_load_questions(digit_operands, add=0, subtract=0, multiply=0, divide=
         # Test questions
         questions[question_type] = []
 
-        for num_carries in all_carries:
-            num_q = num_questions
-            chosen_indices = []
-            possible_indices = list(range(len(question_set[num_carries]["input"])))
-            while len(possible_indices) < num_q:
-                chosen_indices += possible_indices
-                num_q -= len(possible_indices)
-            chosen_indices = chosen_indices + \
-                     [possible_indices.pop(choice(range(len(possible_indices)))) for _ in range(num_q)]
-            shuffle(chosen_indices)
-            question_nums = [question_set[num_carries]["input"][index] for index in chosen_indices]
-            answer_nums = [question_set[num_carries]["output"][index] for index in chosen_indices]
-            for q, a, i in zip(question_nums, answer_nums, chosen_indices):
-                questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
-        shuffle(questions[question_type])
-
         # Practice questions
         p_questions[question_type] = []
+
         for num_carries in all_carries:
-            num_q = n_practices
+            num_q = num_questions + n_practices
             chosen_indices = []
             possible_indices = list(range(len(question_set[num_carries]["input"])))
             while len(possible_indices) < num_q:
@@ -54,11 +39,17 @@ def evenly_load_questions(digit_operands, add=0, subtract=0, multiply=0, divide=
             shuffle(chosen_indices)
             question_nums = [question_set[num_carries]["input"][index] for index in chosen_indices]
             answer_nums = [question_set[num_carries]["output"][index] for index in chosen_indices]
+            cnt_per_carries = 0
             for q, a, i in zip(question_nums, answer_nums, chosen_indices):
-                p_questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
+                if cnt_per_carries == 0:
+                    p_questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
+                else:
+                    questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
+                cnt_per_carries += 1
+        shuffle(questions[question_type])
         shuffle(p_questions[question_type])
-
         questions[question_type] = p_questions[question_type] + questions[question_type]
+
     return questions
 
 
