@@ -11,6 +11,8 @@ PRACTICE_RESULTS_DIR = os.path.join(USER_DATA_PATH, ".practice_results")
 MALE, FEMALE = range(1, 3)
 BAD, BAVERAGE, AAVERAGE, GOOD = range(1, 5)
 DIGIT_OPERANDS = 4
+N_PRACTICES_PER_CARRIES = 1
+N_CARRIES_DICT = {'add':5, 'subtract':4, 'multiply':9, 'divide':4, 'modulo':4}
 
 
 OPERATION_DICT = {"ADD": "+", "SUBTRACT": "—", "MULTIPLY": "x", "DIVIDE": "÷", "MODULO": "%"}
@@ -205,7 +207,7 @@ def run_experiment():
 
 def run_ui_experiment():
     [ADD, SUBTRACT, MULTIPLY, DIVIDE, MODULO] = get_problems_per_carries()
-    question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO)
+    question_set = evenly_load_questions(DIGIT_OPERANDS, add=ADD, subtract=SUBTRACT, multiply=MULTIPLY, divide=DIVIDE, modulo=MODULO, n_practices=N_PRACTICES_PER_CARRIES)
     extracted_question_bank = [(question[0], question[1], question[2], question[3]) for question in question_set[get_question_set().lower()]]
     question_bank_copy = deepcopy(extracted_question_bank)
     quiz = Quiz(extracted_question_bank, OPERATION_DICT[get_question_set().upper()])
@@ -220,7 +222,8 @@ def run_ui_experiment():
                             question_type=get_question_set(), num_carries=question_bank_copy[i][3]))
 
     assert len(results) == len(question_bank_copy)
-    return results
+    n_practice_questions = N_PRACTICES_PER_CARRIES * N_CARRIES_DICT[get_question_set().lower()]
+    return results[n_practice_questions:]
 
 
 def ask_question(question_type, operand1, operand2, answer, num_carries, qid):

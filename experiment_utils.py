@@ -6,20 +6,23 @@ TEST_DIGIT_OPERANDS = 4
 NUM_TEST_QUESTIONS_PER_CARRY = 10
 
 
-def evenly_load_questions(digit_operands, add=0, subtract=0, multiply=0, divide=0, modulo=0):
+def evenly_load_questions(digit_operands, add=0, subtract=0, multiply=0, divide=0, modulo=0, n_practices=1):
     """
     This method will use a sample by replacement technique to provide the given number of questions
     for each num_carry sub dataset for that operation with the given number of digit_operands
     """
     question_nums = [add, subtract, multiply, divide, modulo]
     questions = {}
+    p_questions = {}
     for num_questions, question_type in zip(question_nums, QUESTION_TYPE):
         if not num_questions:
             continue
 
-        questions[question_type] = []
         question_set = generate_datasets(digit_operands, question_type)
         all_carries = question_set.keys()
+
+        # Test questions
+        questions[question_type] = []
 
         for num_carries in all_carries:
             num_q = num_questions
@@ -36,6 +39,26 @@ def evenly_load_questions(digit_operands, add=0, subtract=0, multiply=0, divide=
             for q, a, i in zip(question_nums, answer_nums, chosen_indices):
                 questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
         shuffle(questions[question_type])
+
+        # Practice questions
+        p_questions[question_type] = []
+        for num_carries in all_carries:
+            num_q = n_practices
+            chosen_indices = []
+            possible_indices = list(range(len(question_set[num_carries]["input"])))
+            while len(possible_indices) < num_q:
+                chosen_indices += possible_indices
+                num_q -= len(possible_indices)
+            chosen_indices = chosen_indices + \
+                     [possible_indices.pop(choice(range(len(possible_indices)))) for _ in range(num_q)]
+            shuffle(chosen_indices)
+            question_nums = [question_set[num_carries]["input"][index] for index in chosen_indices]
+            answer_nums = [question_set[num_carries]["output"][index] for index in chosen_indices]
+            for q, a, i in zip(question_nums, answer_nums, chosen_indices):
+                p_questions[question_type].append((q[:digit_operands], q[digit_operands:], a, num_carries, i))
+        shuffle(p_questions[question_type])
+
+        questions[question_type] = p_questions[question_type] + questions[question_type]
     return questions
 
 
@@ -144,5 +167,3 @@ if __name__ == "__main__":
     test_evenly_load_questions_loads_correct_number_of_questions()
     test_question_indices_map_back_to_correct_questions()
     test_sample_with_replacement()
-
-
