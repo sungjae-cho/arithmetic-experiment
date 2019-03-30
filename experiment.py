@@ -146,8 +146,8 @@ def wait_for_user():
     print("These questions will involve {0} operations.".format(get_question_set()))
     print("Please answer these questions as quickly and accurately as possible.")
     print("Wait for your instructor to go over the experiment in detail before beginning the experiment.")
-    print("You can leave the experiment anytime by typing 'QUIT' in response to the "
-          "'Are you ready for next question (Y/N) ??' question")
+    #print("You can leave the experiment anytime by typing 'QUIT' in response to the "
+    #      "'Are you ready for next question (Y/N) ??' question")
     while not ready:
         print("Are you ready (Y/N) ??")
         r = _get_input()
