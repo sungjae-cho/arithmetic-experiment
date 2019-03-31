@@ -167,7 +167,7 @@ def record_results(year, gender, ability, major, results):
     with open(file_name, "w+") as fh:
         for result in results:
             result_string = "{qid}\t{correct}\t{duration}\t{user_answer}\t{correct_answer}\t{operand_digits}\t" \
-                            "{question_type}\t{num_carries}\n".format(**result)
+                            "{question_type}\t{num_carries}\t{button_order}\n".format(**result)
             fh.write(result_string)
 
 
@@ -219,7 +219,7 @@ def run_ui_experiment():
     for i in range(len(quiz.responses)):
         results.append(dict(qid=question_bank_copy[i][0].tolist() + question_bank_copy[i][1].tolist(), correct=quiz.responses[i][2], duration=round(quiz.responses[i][1], 3),
                             user_answer=quiz.responses[i][0], correct_answer=question_bank_copy[i][2], operand_digits=DIGIT_OPERANDS,
-                            question_type=get_question_set(), num_carries=question_bank_copy[i][3]))
+                            question_type=get_question_set(), num_carries=question_bank_copy[i][3], button_order=quiz.button_order[i]))
 
     assert len(results) == len(question_bank_copy)
     n_practice_questions = N_PRACTICES_PER_CARRIES * N_CARRIES_DICT[get_question_set().lower()]
