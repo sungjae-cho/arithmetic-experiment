@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.font
 import time
-
+import threading
 
 class Quiz(object):
 
@@ -14,6 +14,8 @@ class Quiz(object):
         self.start_time = None
         self.font_default = tkinter.font.Font(size=36, weight='bold')
         self.font_true_answer = tkinter.font.Font(size=34, weight='bold')
+        self.check_dict = {}
+        self.button_order = []
 
 
     def setup(self):
@@ -65,6 +67,12 @@ class Quiz(object):
             v = IntVar()
             v.set(-1) # initialize
             v_list.append(v)
+            index_list = []
+            threads = []
+            self.check_dict[1] = 1
+            for i in range(len(v_list)):
+                threads.append(threading.Thread(target=thread_function, args=(v_list[i], i, index_list, self.check_dict)))
+                threads[i].start()
 
             for digit in digits:
                 b = Radiobutton(self.master, text=str(digit), variable=v, value=digit,
@@ -73,7 +81,7 @@ class Quiz(object):
                 #b.pack(side=LEFT)
 
         self.start_time = time.time()
-        cal = lambda : self.callback(true_answer, n_operand_digits, v_list)
+        cal = lambda : self.callback(true_answer, n_operand_digits, v_list, threads, index_list)
         empty_space = Label(self.master, text="", font=self.font_true_answer)
         empty_space.grid(row=5, column=1, columnspan=n_operand_digits+1)
         button_submit = Button(self.master, text="Submit", font=self.font_default, command=cal)
@@ -81,9 +89,15 @@ class Quiz(object):
         self.master.mainloop()
 
 
-    def callback(self, true_answer, n_operand_digits, v_list):
+    def callback(self, true_answer, n_operand_digits, v_list, threads, index_list):
+
         if not self.start_time:
             return
+        self.check_dict.pop(1)
+        for thread in threads:
+            thread.join()
+        self.button_order.append(index_list)
+        print(self.button_order)
 
         answer, rt = [v.get() if v.get() >=0 else 0 for v in v_list], time.time() - self.start_time
         true_answer = true_answer.tolist()
@@ -102,3 +116,13 @@ class Quiz(object):
         button_next = Button(self.master, text="Next", font=self.font_default, command=self.open_question)
         button_next.grid(row=8, column=1, columnspan=n_operand_digits+1)
         self.extra_panels = [Submit_message, button_next]
+
+
+def thread_function(int_var, i, index_list, check):
+
+    v = int_var.get()
+    while check:
+        if int_var.get() != v:
+            index_list.append(i)
+            v = int_var.get()
+        time.sleep(.05)
