@@ -85,6 +85,9 @@ class Quiz(object):
         if not self.start_time:
             return
 
+        if -1 in [v.get() for v in v_list]:
+            return
+
         answer, rt = [v.get() if v.get() >=0 else 0 for v in v_list], time.time() - self.start_time
         true_answer = true_answer.tolist()
         if len(true_answer) > len(answer):
