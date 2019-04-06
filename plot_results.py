@@ -669,7 +669,7 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
         plt.ylim(ylim_range)
-        plt.yticks(np.arange(0, 12.1, step=1))
+        plt.yticks(np.arange(ylim_range[0], ylim_range[1] + 0.1, step=1))
         plt.grid(axis='y')
         #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
 
