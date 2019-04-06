@@ -449,7 +449,9 @@ def plot_mean_accuracy_by_operator(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_mean_accuracy_by_carries(mode='save', file_format='pdf'):
+def plot_mean_accuracy_by_carries(experiment_name, operator_list=None, mode='save', file_format='pdf'):
+    if operator_list != None:
+        operators = operator_list
     for operator in operators:
         mean_accuracy_by_carries, std_accuracy_by_carries, _ = get_accuracy_by_carries(operator)
 
@@ -466,7 +468,7 @@ def plot_mean_accuracy_by_carries(mode='save', file_format='pdf'):
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
-        #plt.ylim(0.0, 60.0)
+        plt.ylim(0.6, 1.0)
         #plt.yticks(np.arange(0, 1.1, step=0.1))
         plt.grid(axis='y')
         #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
@@ -482,9 +484,10 @@ def plot_mean_accuracy_by_carries(mode='save', file_format='pdf'):
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(dir_plot_fig)
-            plot_fig_path = '{plot_dir}/mean_accuracy_by_carries_{operator}.{extension}'.format(
+            create_dir(join(dir_plot_fig, experiment_name))
+            plot_fig_path = '{plot_dir}/{experiment_name}/mean_accuracy_by_carries_{operator}.{extension}'.format(
                 plot_dir=dir_plot_fig,
+                experiment_name=experiment_name,
                 operator=operator,
                 extension=file_format
             )
@@ -639,7 +642,7 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_mean_mean_solving_time_by_carries(operator_list=None, mode='save', file_format='pdf',
+def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, mode='save', file_format='pdf',
     rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=3):
 
     if operator_list != None:
@@ -664,8 +667,8 @@ def plot_mean_mean_solving_time_by_carries(operator_list=None, mode='save', file
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
-        #plt.ylim(0.0, 60.0)
-        #plt.yticks(np.arange(0, 1.1, step=0.1))
+        plt.ylim(0.0, 12.0)
+        plt.yticks(np.arange(0, 12.1, step=1))
         plt.grid(axis='y')
         #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
 
@@ -680,9 +683,10 @@ def plot_mean_mean_solving_time_by_carries(operator_list=None, mode='save', file
         if mode == 'show':
             plt.show()
         if mode == 'save':
-            create_dir(dir_plot_fig)
-            plot_fig_path = '{plot_dir}/mean_mean_solving_time_by_carries_{operator}.{extension}'.format(
+            create_dir(join(dir_plot_fig, experiment_name))
+            plot_fig_path = '{plot_dir}/{experiment_name}/mean_mean_solving_time_by_carries_{operator}.{extension}'.format(
                 plot_dir=dir_plot_fig,
+                experiment_name=experiment_name,
                 operator=operator,
                 extension=file_format
             )
