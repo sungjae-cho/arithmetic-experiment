@@ -639,14 +639,16 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
     plt.clf()
 
 
-def plot_mean_mean_solving_time_by_carries(mode='save', file_format='pdf',
+def plot_mean_mean_solving_time_by_carries(operator_list=None, mode='save', file_format='pdf',
     rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=2):
 
+    if operator_list != None:
+        operators = operator_list
     for operator in operators:
         mean_mean_solving_time_by_carries, std_mean_solving_time_by_carries, _ = get_mean_solving_time_by_carries(
             operator,
             rm_carry_outlier=rm_carry_outlier,
-            rm_carry_outlier_method=rm_carry_outlier_method, 
+            rm_carry_outlier_method=rm_carry_outlier_method,
             outlier_std=outlier_std)
 
         carries_list = list(mean_mean_solving_time_by_carries.keys())
