@@ -71,7 +71,7 @@ def filter_for_mean_solving_time(df_result, rm_carry_outlier=False,
                 q1 = np.percentile(st_series, 25)
                 q3 = np.percentile(st_series, 75)
                 iqr = q3 - q1
-                df_carry = df_carry[(st_series > q1 - 1.5 * iqr) & (st_series < q3 + 1.5 * iqr)]
+                df_carry = df_carry[(st_series >= q1 - 1.5 * iqr) & (st_series <= q3 + 1.5 * iqr)]
                 df_carry_list.append(df_carry)
 
         if rm_carry_outlier_method == 'z':
