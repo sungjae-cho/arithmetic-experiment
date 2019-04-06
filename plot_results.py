@@ -643,6 +643,7 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
 
 def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, mode='save', file_format='pdf',
+    ylim_range=(0.0, 11.0),
     rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=3):
 
     if operator_list != None:
@@ -667,7 +668,7 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
-        plt.ylim(0.0, 12.0)
+        plt.ylim(ylim_range)
         plt.yticks(np.arange(0, 12.1, step=1))
         plt.grid(axis='y')
         #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
