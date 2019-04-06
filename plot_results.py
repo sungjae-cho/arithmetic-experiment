@@ -55,7 +55,7 @@ def filter_operator(df_result, operator):
 
 
 def filter_for_mean_solving_time(df_result, rm_carry_outlier=False,
-    rm_carry_outlier_method='iqr', outlier_std=2):
+    rm_carry_outlier_method='iqr', outlier_std=3):
     if solving_time_normalized:
         df_result = normalize_solving_time(df_result)
     if solving_time_correctness:
@@ -264,7 +264,7 @@ def get_accuracy_by_carries(operator):
 
 
 def get_mean_solving_time_by_operator(rm_carry_outlier=False,
-    rm_carry_outlier_method='iqr', outlier_std=2):
+    rm_carry_outlier_method='iqr', outlier_std=3):
     '''
     Returns
     - df : pandas.dataframe. Each row has the mean solving time of a person.
@@ -290,7 +290,7 @@ def get_mean_solving_time_by_operator(rm_carry_outlier=False,
 
 
 def get_mean_solving_time_by_carries(operator, rm_carry_outlier=False,
-    rm_carry_outlier_method='iqr', outlier_std=2):
+    rm_carry_outlier_method='iqr', outlier_std=3):
     df_results = get_results(operator)
     for i in range(len(df_results)):
         df_results[i] = filter_for_mean_solving_time(df_results[i],
@@ -640,7 +640,7 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
 
 def plot_mean_mean_solving_time_by_carries(operator_list=None, mode='save', file_format='pdf',
-    rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=2):
+    rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=3):
 
     if operator_list != None:
         operators = operator_list
@@ -1008,7 +1008,7 @@ def plot_all_mst_by_problems(mode='save', file_format='pdf'):
     plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
 
 
-def save_csv_files(experiment_name, rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=2):
+def save_csv_files(experiment_name, rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=3):
     '''
     Create CSV files for ANOVA.
     '''
