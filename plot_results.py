@@ -1001,7 +1001,7 @@ def plot_all_mst_by_problems(mode='save', file_format='pdf'):
     plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
 
 
-def save_csv_files(experiment_name, rm_carry_outlier_method='iqr', rm_carry_outlier=False, outlier_std=2):
+def save_csv_files(experiment_name, rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=2):
     '''
     Create CSV files for ANOVA.
     '''
