@@ -54,7 +54,8 @@ def filter_operator(df_result, operator):
     return df_result[cond_operator]
 
 
-def filter_for_mean_solving_time(df_result, rm_carry_outlier=False, outlier_std=2):
+def filter_for_mean_solving_time(df_result, rm_carry_outlier=False,
+    rm_carry_outlier_method='iqr', outlier_std=2):
     if solving_time_normalized:
         df_result = normalize_solving_time(df_result)
     if solving_time_correctness:
@@ -62,13 +63,26 @@ def filter_for_mean_solving_time(df_result, rm_carry_outlier=False, outlier_std=
     if rm_carry_outlier:
         carry_list = list(df_result['carries'].unique()); carry_list.sort()
         df_carry_list = list()
-        for carries in carry_list:
-            df_carry = df_result[df_result['carries'] == carries]
-            df_carry_st_mean = float(df_carry[['solving_time']].mean())
-            df_carry_st_std = float(df_carry[['solving_time']].std())
-            df_carry = df_carry[df_carry['solving_time'] < (df_carry_st_mean + outlier_std * df_carry_st_std)]
-            df_carry = df_carry[df_carry['solving_time'] > (df_carry_st_mean - outlier_std * df_carry_st_std)]
-            df_carry_list.append(df_carry)
+
+        if rm_carry_outlier_method == 'iqr':
+            for carries in carry_list:
+                df_carry = df_result[df_result['carries'] == carries]
+                st_series = df_carry['solving_time']
+                q1 = np.percentile(st_series, 25)
+                q3 = np.percentile(st_series, 75)
+                iqr = q3 - q1
+                df_carry = df_carry[(st_series > q1 - 1.5 * iqr) & (st_series < q3 + 1.5 * iqr)]
+                df_carry_list.append(df_carry)
+
+        if rm_carry_outlier_method == 'z':
+            for carries in carry_list:
+                df_carry = df_result[df_result['carries'] == carries]
+                df_carry_st_mean = float(df_carry[['solving_time']].mean())
+                df_carry_st_std = float(df_carry[['solving_time']].std())
+                df_carry = df_carry[df_carry['solving_time'] < (df_carry_st_mean + outlier_std * df_carry_st_std)]
+                df_carry = df_carry[df_carry['solving_time'] > (df_carry_st_mean - outlier_std * df_carry_st_std)]
+                df_carry_list.append(df_carry)
+
         df_result = pd.concat(df_carry_list, axis=0)
     return df_result
 
@@ -249,7 +263,8 @@ def get_accuracy_by_carries(operator):
     return mean_accuract_by_carries, std_accuracy_by_carries, df_accuracy_carries
 
 
-def get_mean_solving_time_by_operator(rm_carry_outlier=False, outlier_std=2):
+def get_mean_solving_time_by_operator(rm_carry_outlier=False,
+    rm_carry_outlier_method='iqr', outlier_std=2):
     '''
     Returns
     - df : pandas.dataframe. Each row has the mean solving time of a person.
@@ -259,7 +274,10 @@ def get_mean_solving_time_by_operator(rm_carry_outlier=False, outlier_std=2):
     for operator in operators:
         df_results = get_results(operator)
         for i in range(len(df_results)):
-            df_results[i] = filter_for_mean_solving_time(df_results[i], rm_carry_outlier=rm_carry_outlier, outlier_std=outlier_std)
+            df_results[i] = filter_for_mean_solving_time(df_results[i],
+                rm_carry_outlier=rm_carry_outlier,
+                m_cary_outlier_method=rm_carry_outlier_method,
+                outlier_std=outlier_std)
         for i in range(len(df_results)):
             df_mean_st_operator = df_results[i].groupby(['operator'], as_index=False)['solving_time'].mean().rename(columns={'solving_time':'mean_solving_time'})
             df_mean_st_operator_list.append(df_mean_st_operator)
@@ -271,10 +289,14 @@ def get_mean_solving_time_by_operator(rm_carry_outlier=False, outlier_std=2):
     return mean_mean_solving_time_by_operator, std_mean_solving_time_by_operator, df_mean_st_operator
 
 
-def get_mean_solving_time_by_carries(operator, rm_carry_outlier=False, outlier_std=2):
+def get_mean_solving_time_by_carries(operator, rm_carry_outlier=False,
+    rm_carry_outlier_method='iqr', outlier_std=2):
     df_results = get_results(operator)
     for i in range(len(df_results)):
-        df_results[i] = filter_for_mean_solving_time(df_results[i], rm_carry_outlier=rm_carry_outlier, outlier_std=outlier_std)
+        df_results[i] = filter_for_mean_solving_time(df_results[i],
+            rm_carry_outlier=rm_carry_outlier,
+            rm_carry_outlier_method=rm_carry_outlier_method,
+            outlier_std=outlier_std)
 
     df_mean_st_carries_list  = list()
 
@@ -979,7 +1001,7 @@ def plot_all_mst_by_problems(mode='save', file_format='pdf'):
     plot_mean_solving_time_by_problems_for_carries(mode=mode, file_format=file_format)
 
 
-def save_csv_files(experiment_name, rm_carry_outlier=False, outlier_std=2):
+def save_csv_files(experiment_name, rm_carry_outlier_method='iqr', rm_carry_outlier=False, outlier_std=2):
     '''
     Create CSV files for ANOVA.
     '''
@@ -1000,7 +1022,11 @@ def save_csv_files(experiment_name, rm_carry_outlier=False, outlier_std=2):
         df_mean_st_operator.to_csv(join(dir_save, 'operators.csv'), index=False)
 
         for operator in data_utils.operators_list:
-            _, _, df_mean_st_carries = get_mean_solving_time_by_carries(operator, rm_carry_outlier=rm_carry_outlier, outlier_std=outlier_std)
+            _, _, df_mean_st_carries =  get_mean_solving_time_by_carries(
+                operator,
+                rm_carry_outlier_method=rm_carry_outlier_method,
+                rm_carry_outlier=rm_carry_outlier,
+                outlier_std=outlier_std)
             df_mean_st_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
 
 
@@ -1018,5 +1044,9 @@ def save_csv_files(experiment_name, rm_carry_outlier=False, outlier_std=2):
         create_dir(dir_save)
 
         for operator in operators_list:
-            _, _, df_mean_st_carries = get_mean_solving_time_by_carries(operator, rm_carry_outlier=rm_carry_outlier, outlier_std=outlier_std)
+            _, _, df_mean_st_carries = get_mean_solving_time_by_carries(
+                operator,
+                rm_carry_outlier_method=rm_carry_outlier_method,
+                rm_carry_outlier=rm_carry_outlier,
+                outlier_std=outlier_std)
             df_mean_st_carries.to_csv(join(dir_save, 'carries_{}.csv'.format(operator)), index=False)
