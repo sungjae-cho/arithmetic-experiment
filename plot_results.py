@@ -25,7 +25,7 @@ problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'mo
 solving_time_normalized = False
 solving_time_correctness = True
 errorbar_std = 1
-font_size = {'xlabel':20, 'ylabel':17, 'xtick':20, 'ytick':10}
+font_size = {'xlabel':14, 'ylabel':14, 'xtick':12, 'ytick':12}
 
 
 def create_dir(directory):
@@ -662,7 +662,7 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
         for i in range(len(e)):
             e[i] = errorbar_std * e[i]
 
-        plt.figure(figsize=(len(x)-1,4))
+        plt.figure(figsize=(len(x)-1, 4 * (ylim_range[1] - ylim_range[0]) / ylim_range[1]))
         plt.xlabel('Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
