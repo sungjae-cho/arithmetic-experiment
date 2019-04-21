@@ -663,7 +663,7 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
             e[i] = errorbar_std * e[i]
 
         plt.figure(figsize=(len(x)-1, 4 * (ylim_range[1] - ylim_range[0]) / ylim_range[1]))
-        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Mean RT (sec.)', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
