@@ -375,7 +375,7 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
         plt.yticks(np.arange(0.8, 1.05, step=0.05))
         plt.grid(axis='y')
         plt.ylabel('Accuracy')
-        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Accuracy', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
@@ -463,7 +463,7 @@ def plot_mean_accuracy_by_carries(experiment_name, operator_list=None, mode='sav
             e[i] = errorbar_std * e[i]
 
         plt.figure(figsize=(len(x)-1,4))
-        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Accuracy', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
@@ -559,7 +559,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
             e[i] = errorbar_std * e[i]
 
         plt.figure(figsize=(len(x)-1,4))
-        plt.xlabel('Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
         #plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
@@ -763,7 +763,7 @@ def boxplot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.grid(axis='y')
         plt.title('[{operator}] Solving time by carries'.format(operator=operator.capitalize()))
         plt.ylabel('Response time (sec.)')
-        plt.xlabel('Carries')
+        plt.xlabel('#Carries')
 
         mean_mean_solving_time_by_carries, std_mean_solving_time_by_carries, df_mean_st_carries = get_mean_solving_time_by_carries(operator)
 
