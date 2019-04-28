@@ -25,7 +25,7 @@ problems_per_carry_ds = {'add':10, 'subtract':10, 'multiply':5, 'divide':10, 'mo
 solving_time_normalized = False
 solving_time_correctness = True
 errorbar_std = 1
-font_size = {'xlabel':14, 'ylabel':14, 'xtick':12, 'ytick':12}
+font_size = {'xlabel':20, 'ylabel':20, 'xtick':20, 'ytick':13}
 
 
 def create_dir(directory):
@@ -276,7 +276,7 @@ def get_mean_solving_time_by_operator(rm_carry_outlier=False,
         for i in range(len(df_results)):
             df_results[i] = filter_for_mean_solving_time(df_results[i],
                 rm_carry_outlier=rm_carry_outlier,
-                m_cary_outlier_method=rm_carry_outlier_method,
+                rm_carry_outlier_method=rm_carry_outlier_method,
                 outlier_std=outlier_std)
         for i in range(len(df_results)):
             df_mean_st_operator = df_results[i].groupby(['operator'], as_index=False)['solving_time'].mean().rename(columns={'solving_time':'mean_solving_time'})
@@ -375,7 +375,7 @@ def plot_accuracy_by_carries(mode='save', file_format='pdf'):
         plt.yticks(np.arange(0.8, 1.05, step=0.05))
         plt.grid(axis='y')
         plt.ylabel('Accuracy')
-        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Accuracy', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
@@ -463,7 +463,7 @@ def plot_mean_accuracy_by_carries(experiment_name, operator_list=None, mode='sav
             e[i] = errorbar_std * e[i]
 
         plt.figure(figsize=(len(x)-1,4))
-        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Accuracy', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
@@ -494,7 +494,7 @@ def plot_mean_accuracy_by_carries(experiment_name, operator_list=None, mode='sav
             plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
 
-def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
+def plot_mean_solving_time_by_operator(experiment_name, mode='save', file_format='pdf'):
 
     total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
     mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
@@ -517,7 +517,7 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
     plt.figure(figsize=(len(x)-1,4))
     #plt.xlabel('Operator')
-    plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
+    plt.ylabel('Mean RT (sec.)', fontsize=font_size['ylabel'])
     plt.tick_params(axis='x', labelsize=font_size['xtick'])
     plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -538,8 +538,9 @@ def plot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         plt.show()
     if mode == 'save':
         create_dir(dir_plot_fig)
-        plot_fig_path = '{plot_dir}/mean_solving_time_by_operator.{extension}'.format(
+        plot_fig_path = '{plot_dir}/{experiment_name}/mean_solving_time_by_operator.{extension}'.format(
             plot_dir=dir_plot_fig,
+            experiment_name=experiment_name,
             extension=file_format
         )
         plt.savefig(plot_fig_path, bbox_inches='tight')
@@ -559,7 +560,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
             e[i] = errorbar_std * e[i]
 
         plt.figure(figsize=(len(x)-1,4))
-        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
         #plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
@@ -590,7 +591,7 @@ def plot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.clf()
 
 
-def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
+def plot_mean_mean_solving_time_by_operator(experiment_name, mode='save', file_format='pdf'):
 
     #total_mean_solving_time, total_std_solving_time = get_mean_solving_time(groupby_operator=False, groupby_carries=False)
     #mean_solving_time_by_operator, std_solving_time_by_operator = get_mean_solving_time(groupby_operator=True, groupby_carries=False)
@@ -613,7 +614,7 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
     plt.figure(figsize=(len(x)-1,4))
     #plt.xlabel('Operator')
-    plt.ylabel('Response time (sec.)', fontsize=font_size['ylabel'])
+    plt.ylabel('Mean RT (sec.)', fontsize=font_size['ylabel'])
     plt.tick_params(axis='x', labelsize=font_size['xtick'])
     plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
@@ -634,8 +635,9 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
         plt.show()
     if mode == 'save':
         create_dir(dir_plot_fig)
-        plot_fig_path = '{plot_dir}/mean_mean_solving_time_by_operator.{extension}'.format(
+        plot_fig_path = '{plot_dir}/{experiment_name}/mean_mean_solving_time_by_operator.{extension}'.format(
             plot_dir=dir_plot_fig,
+            experiment_name=experiment_name,
             extension=file_format
         )
         plt.savefig(plot_fig_path, bbox_inches='tight')
@@ -643,7 +645,7 @@ def plot_mean_mean_solving_time_by_operator(mode='save', file_format='pdf'):
 
 
 def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, mode='save', file_format='pdf',
-    ylim_range=(0.0, 11.0),
+    ylim_range=None,
     rm_carry_outlier=False, rm_carry_outlier_method='iqr', outlier_std=3):
 
     if operator_list != None:
@@ -656,20 +658,22 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
             outlier_std=outlier_std)
 
         carries_list = list(mean_mean_solving_time_by_carries.keys())
-        x = [str(carries) for carries in carries_list]
-        y = list(mean_mean_solving_time_by_carries.get_values())
-        e = list(std_mean_solving_time_by_carries.get_values())
+        x = np.asarray([str(carries) for carries in carries_list])
+        y = np.asarray((mean_mean_solving_time_by_carries.get_values()))
+        e = np.asarray((std_mean_solving_time_by_carries.get_values()))
         for i in range(len(e)):
             e[i] = errorbar_std * e[i]
-
+        if ylim_range == None:
+            ylim_range = (np.floor(np.min(y-e))-0.1, np.ceil(np.max(y+e))+0.5)
         plt.figure(figsize=(len(x)-1, 4 * (ylim_range[1] - ylim_range[0]) / ylim_range[1]))
-        plt.xlabel('#Carries', fontsize=font_size['xlabel'])
+        plt.xlabel('Carries', fontsize=font_size['xlabel'])
         plt.ylabel('Mean RT (sec.)', fontsize=font_size['ylabel'])
         plt.tick_params(axis='x', labelsize=font_size['xtick'])
         plt.tick_params(axis='y', labelsize=font_size['ytick'])
 
         plt.ylim(ylim_range)
-        plt.yticks(np.arange(ylim_range[0], ylim_range[1] + 0.1, step=1))
+        if ylim_range == None:
+            plt.yticks(np.arange(ylim_range[0], ylim_range[1] + 0.1, step=1))
         plt.grid(axis='y')
         #plt.title('[{operator}] Mean solving time by carries'.format(operator=operator.capitalize()))
 
@@ -693,6 +697,7 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
             )
             plt.savefig(plot_fig_path, bbox_inches='tight')
         plt.clf()
+        plt.close()
 
 
 def boxplot_mean_solving_time_by_operator(mode='save', file_format='pdf'):
@@ -763,7 +768,7 @@ def boxplot_mean_solving_time_by_carries(mode='save', file_format='pdf'):
         plt.grid(axis='y')
         plt.title('[{operator}] Solving time by carries'.format(operator=operator.capitalize()))
         plt.ylabel('Response time (sec.)')
-        plt.xlabel('#Carries')
+        plt.xlabel('Carries')
 
         mean_mean_solving_time_by_carries, std_mean_solving_time_by_carries, df_mean_st_carries = get_mean_solving_time_by_carries(operator)
 
