@@ -15,7 +15,7 @@ from pprint import pprint
 
 
 dir_plot_fig = 'plot_figures/results'
-dir_results = 'user_data/results'
+dir_results = 'user_data/results/{}'.format('iccm2019_final')
 dir_st = 'user_data/results_csv/solving_time'
 dir_st_correct = 'user_data/results_csv/solving_time_correct'
 dir_accuracy = 'user_data/results_csv/accuracy'
@@ -681,6 +681,17 @@ def plot_mean_mean_solving_time_by_carries(experiment_name, operator_list=None, 
             xmin=-0.5, xmax=len(x)-0.5, colors='g',
             label='[{operator}] Operator dataset'.format(operator=operator.capitalize()))
         plt.legend()'''
+        if operator == 'add':
+            i=0; plt.text(x[i], y[i]-e[i]-0.3, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='left', verticalalignment='top', rotation=0)
+            i=1; plt.text(x[i], y[i]+e[i]+0.2, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='center', rotation=0)
+            i=2; plt.text(x[i], y[i]+e[i]+0.5, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='center', rotation=0)
+            i=3; plt.text(x[i], y[i]+e[i]+0.5, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='center', rotation=0)
+            i=4; plt.text(x[i], y[i]+e[i]+0.3, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='right', rotation=0)
+        if operator == 'subtract':
+            i=0; plt.text(x[i], y[i]-e[i]-0.1, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='left', verticalalignment='top', rotation=0)
+            i=1; plt.text(x[i], y[i]+e[i]+0.8, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='center', rotation=0)
+            i=2; plt.text(x[i], y[i]+e[i]+0.4, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='center', rotation=0)
+            i=3; plt.text(x[i], y[i]+e[i]+0.1, 'SD={}'.format(round(e[i],2)), fontsize=12, color='orange', horizontalalignment='right', rotation=0)
 
         if mode == 'show':
             plt.show()
