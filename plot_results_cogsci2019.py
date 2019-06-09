@@ -15,7 +15,7 @@ from pprint import pprint
 
 
 dir_plot_fig = 'plot_figures/results'
-dir_results = 'user_data/results'
+dir_results = 'user_data/results/{}'.format('cogsci2019')
 dir_st = 'user_data/results_csv/solving_time'
 dir_st_correct = 'user_data/results_csv/solving_time_correct'
 dir_accuracy = 'user_data/results_csv/accuracy'
