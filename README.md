@@ -117,3 +117,44 @@ How to access the i-th operation in the 2-carry dataset
 carry_datasets[2]['input'][i,:]
 carry_datasets[2]['output'][i,:]
 ```
+
+# Citation
+
+If you want to cite the command line interface (CLI) of this software, then cite this.
+
+```
+@inproceedings{ChoLHZ19,
+  author    = {Sungjae Cho and Jaeseo Lim and Chris Hickey and Byoung{-}Tak Zhang},
+  title     = {Problem Difficulty in Arithmetic Cognition: Humans and Connectionist Models},
+  booktitle = {Proceedings of the 41th Annual Meeting of the Cognitive Science Society},
+  pages     = {1506--1512},
+  year      = {2019}
+}
+```
+
+If you want to cite the command line interface (GUI) of this software, then cite this.
+```
+@inproceedings{ChoLHPZ19,
+  author    = {Sungjae Cho and Jaeseo Lim and Chris Hickey and Jung Park and Byoung{-}Tak Zhang},
+  title     = {Simulating Problem Difficulty in Arithmetic Cognition Through Dynamic Connectionist Models},
+  booktitle = {Proceedings of the 17th International Conference on Cognitive Modeling},
+  pages     = {29--34},
+  year      = {2019}
+}
+```
+
+# Acknowledgement
+
+Acknowledgement for the CLI experiment.
+```
+This work was partly supported by the Institute for Information & Communications Technology Promotion (R0126-16-1072-SW.StarLab, 2017-0-01772-VTT, 2018-0-00622-RMI, 2019-0-01367-BabyMind) and Korea Evaluation Institute of Industrial Technology (10060086-RISF) grant funded by the Korea government (MSIP, DAPA).
+```
+
+Acknowledgement for the GUI experiment.
+```
+This work was supported by a grant to Biomimetic Robot Research Center funded by Defense Acquisition Program Administration and Agency for Defense Development (UD160027ID).
+```
+
+# License
+
+MIT License
